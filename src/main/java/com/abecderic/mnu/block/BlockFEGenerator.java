@@ -13,7 +13,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -47,7 +46,7 @@ public class BlockFEGenerator extends BlockContainer
             if (te instanceof TileEntityFEGenerator)
             {
                 TileEntityFEGenerator gen = (TileEntityFEGenerator) te;
-                playerIn.sendMessage(new TextComponentString(gen.getEnergyString()));
+                playerIn.sendMessage(gen.getEnergyString());
             }
         }
         return true;
