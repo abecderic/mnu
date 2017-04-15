@@ -1,0 +1,5 @@
+fluid.fluid_darkmatter=Dark Matter
+fluid.fluid_mnu=MNU
+
+tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
+tile.mnu:fluid_mnu.name=Liquid MNU

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "mnu",
+  "name": "MNU",
+  "description": "High-tech power generation",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["abecderic"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
