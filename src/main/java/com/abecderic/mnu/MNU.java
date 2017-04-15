@@ -2,6 +2,7 @@ package com.abecderic.mnu;
 
 import com.abecderic.mnu.block.MNUBlocks;
 import com.abecderic.mnu.fluid.MNUFluids;
+import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -42,6 +43,7 @@ public class MNU
     public void preInit(FMLPreInitializationEvent event)
     {
         MNUBlocks.registerBlocks();
+        MNUItems.registerItems();
         MNUFluids.registerFluids();
     }
 

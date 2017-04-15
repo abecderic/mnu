@@ -1,6 +1,11 @@
 fluid.fluid_darkmatter=Dark Matter
 fluid.fluid_mnu=MNU
 
+item.mnu:dm_scanner.name=Dark Matter Scanner
+item.mnu:dm_scanner.result=Estimated deposit size: %s
+item.mnu:dm_scanner.tip=Use on a block to scan
+item.mnu:dm_scanner.tip2=the area for Dark Matter
+
 itemGroup.mnu=MNU
 
 msg.dm_pump.tip=* Place above Bedrock block
