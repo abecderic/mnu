@@ -1,5 +1,6 @@
 package com.abecderic.mnu.block;
 
+import com.abecderic.mnu.MNU;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -13,7 +14,7 @@ public class BlockFluid extends BlockFluidClassic
     {
         super(fluid, Material.WATER);
         setUnlocalizedName(name);
-        // TODO creative tab
+        setCreativeTab(MNU.TAB);
     }
 
     @Override
