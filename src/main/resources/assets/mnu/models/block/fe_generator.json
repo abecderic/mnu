@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/fe_generator_front",
+		"east": "mnu:blocks/fe_generator_side",
+		"south": "mnu:blocks/fe_generator_side",
+		"west": "mnu:blocks/fe_generator_side",
+		"up": "mnu:blocks/fe_generator",
+		"down": "mnu:blocks/fe_generator",
+		"all": "mnu:blocks/fe_generator"
+	}
+}

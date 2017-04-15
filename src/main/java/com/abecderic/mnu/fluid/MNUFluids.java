@@ -12,8 +12,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.util.Map;
-
 public class MNUFluids
 {
     public static final String FLUID_DARK_MATTER = "fluid_darkmatter";
@@ -29,12 +27,6 @@ public class MNUFluids
 
         registerFluid(fluidDarkMatter, FLUID_DARK_MATTER);
         registerFluid(fluidMNU, FLUID_MNU);
-
-        System.out.println("Fluids:");
-        for (Map.Entry<String, Fluid> entry : FluidRegistry.getRegisteredFluids().entrySet())
-        {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
     }
 
     private static void registerFluid(Fluid fluid, String name)

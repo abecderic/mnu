@@ -1,5 +1,6 @@
 package com.abecderic.mnu;
 
+import com.abecderic.mnu.block.MNUBlocks;
 import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -40,6 +41,7 @@ public class MNU
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+        MNUBlocks.registerBlocks();
         MNUFluids.registerFluids();
     }
 
