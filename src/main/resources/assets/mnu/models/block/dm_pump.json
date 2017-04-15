@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/dm_pump_side",
+		"east": "mnu:blocks/dm_pump_side",
+		"south": "mnu:blocks/dm_pump_side",
+		"west": "mnu:blocks/dm_pump_side",
+		"up": "mnu:blocks/dm_pump_top",
+		"down": "mnu:blocks/dm_pump_bottom",
+		"all": "mnu:blocks/dm_pump_top"
+	}
+}

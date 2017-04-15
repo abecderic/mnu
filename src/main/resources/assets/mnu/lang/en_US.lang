@@ -3,11 +3,14 @@ fluid.fluid_mnu=MNU
 
 itemGroup.mnu=MNU
 
+msg.dm_pump.tip=* Place above Bedrock block
+msg.dm_pump.tip2=* Insert Energy
 msg.fe_gen.energy=Energy: %s / %s
 msg.fe_gen.tip=Insert burnable material
 msg.fe_gen.tip2=via automatic ways.
 msg.fe_gen.tip3=(e.g. with a hopper)
 
+tile.mnu:dm_pump.name=Dark Matter Pump
 tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU

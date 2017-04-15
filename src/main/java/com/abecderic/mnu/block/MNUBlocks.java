@@ -16,11 +16,18 @@ public class MNUBlocks
     public static final String FE_GEN = "fe_generator";
     public static Block feGen;
 
+    public static final String DM_PUMP = "dm_pump";
+    public static Block dmPump;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
         registerBlockWithItemBlock(feGen, FE_GEN, new ItemBlockTooltip(feGen, "msg.fe_gen.tip", "msg.fe_gen.tip2", "msg.fe_gen.tip3"));
         registerTileEntity(feGen, FE_GEN, TileEntityFEGenerator.class);
+
+        dmPump = new BlockDMPump();
+        registerBlockWithItemBlock(dmPump, DM_PUMP, new ItemBlockTooltip(dmPump, "msg.dm_pump.tip", "msg.dm_pump.tip2"));
+        registerTileEntity(dmPump, DM_PUMP, TileEntityDMPump.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -48,6 +55,7 @@ public class MNUBlocks
     public static void registerModels()
     {
         registerModel(feGen, FE_GEN);
+        registerModel(dmPump, DM_PUMP);
     }
 
     private static void registerModel(Block block, String name)
