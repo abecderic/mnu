@@ -1,6 +1,7 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
+import com.abecderic.mnu.item.ItemBlockTooltip;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -18,24 +19,29 @@ public class MNUBlocks
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
+        registerBlockWithItemBlock(feGen, FE_GEN, new ItemBlockTooltip(feGen, "msg.fe_gen.tip", "msg.fe_gen.tip2", "msg.fe_gen.tip3"));
         registerTileEntity(feGen, FE_GEN, TileEntityFEGenerator.class);
     }
 
     private static void registerBlock(Block block, String name)
+    {
+        ItemBlock itemBlock = new ItemBlock(block);
+        registerBlockWithItemBlock(block, name, itemBlock);
+    }
+
+    private static void registerBlockWithItemBlock(Block block, String name, ItemBlock itemBlock)
     {
         /* block */
         block.setRegistryName(name);
         GameRegistry.register(block);
 
         /* item */
-        ItemBlock itemBlock = new ItemBlock(block);
         itemBlock.setRegistryName(name);
         GameRegistry.register(itemBlock);
     }
 
     private static void registerTileEntity(Block block, String name, Class<? extends TileEntity> clazz)
     {
-        registerBlock(block, name);
         GameRegistry.registerTileEntity(clazz, name);
     }
 
