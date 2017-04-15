@@ -7,6 +7,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -50,6 +51,24 @@ public class BlockFEGenerator extends BlockContainer
             }
         }
         return true;
+    }
+
+    @Override
+    public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player)
+    {
+        super.onBlockHarvested(worldIn, pos, state, player);
+        if (!worldIn.isRemote)
+        {
+            TileEntity te = worldIn.getTileEntity(pos);
+            if (te instanceof TileEntityFEGenerator)
+            {
+                TileEntityFEGenerator gen = (TileEntityFEGenerator) te;
+                EntityItem item = new EntityItem(worldIn);
+                item.setEntityItemStack(gen.getFuel());
+                item.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                worldIn.spawnEntity(item);
+            }
+        }
     }
 
     @Override

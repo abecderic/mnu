@@ -96,4 +96,9 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
     {
         return new TextComponentTranslation("msg.fe_gen.energy", energyStorage.getEnergyStored(), energyStorage.getMaxEnergyStored());
     }
+
+    public ItemStack getFuel()
+    {
+        return itemStack.getStackInSlot(0);
+    }
 }
