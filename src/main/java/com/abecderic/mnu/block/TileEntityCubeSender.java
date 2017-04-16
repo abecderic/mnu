@@ -1,5 +1,6 @@
 package com.abecderic.mnu.block;
 
+import com.abecderic.mnu.entity.EntityCube;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
@@ -14,6 +15,11 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
 
     @Override
     public void update()
+    {
+
+    }
+
+    public void receiveCube(EntityCube cube)
     {
 
     }

@@ -1,6 +1,7 @@
 package com.abecderic.mnu;
 
 import com.abecderic.mnu.block.MNUBlocks;
+import com.abecderic.mnu.entity.MNUEntities;
 import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.proxy.CommonProxy;
@@ -45,6 +46,7 @@ public class MNU
         MNUBlocks.registerBlocks();
         MNUItems.registerItems();
         MNUFluids.registerFluids();
+        MNUEntities.registerEntities();
     }
 
     @Mod.EventHandler
