@@ -2,6 +2,9 @@ package com.abecderic.mnu.entity;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
@@ -9,9 +12,18 @@ import net.minecraft.world.World;
 
 public class EntityCube extends EntityThrowable
 {
+    private static final DataParameter<Integer> ENERGY = EntityDataManager.createKey(EntityCube.class, DataSerializers.VARINT);
+
     public EntityCube(World worldIn)
     {
         super(worldIn);
+    }
+
+    @Override
+    protected void entityInit()
+    {
+        super.entityInit();
+        this.getDataManager().register(ENERGY, 0);
     }
 
     @Override
