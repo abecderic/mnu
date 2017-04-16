@@ -37,7 +37,13 @@ public class BlockDMPump extends BlockContainer
         if (playerIn.isSneaking()) return false;
         if (!worldIn.isRemote)
         {
-
+            TileEntity te = worldIn.getTileEntity(pos);
+            if (te instanceof TileEntityDMPump)
+            {
+                TileEntityDMPump gen = (TileEntityDMPump) te;
+                playerIn.sendMessage(gen.getEnergyString());
+                playerIn.sendMessage(gen.getTankString());
+            }
         }
         return true;
     }

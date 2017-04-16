@@ -1,6 +1,6 @@
 package com.abecderic.mnu.block;
 
-import com.abecderic.mnu.util.EnergyStorageGenerator;
+import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.ItemFuelHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +20,7 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
 {
     private static final int STORAGE = 128000;
     private static final int MAX_OUT = 128;
-    private EnergyStorageGenerator energyStorage = new EnergyStorageGenerator(STORAGE, 0, MAX_OUT);
+    private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, 0, MAX_OUT);
     private ItemFuelHandler itemStack = new ItemFuelHandler(1);
     private int tickPart = 0;
 
@@ -78,7 +78,7 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
     {
         super.readFromNBT(compound);
         tickPart = compound.getInteger("tickPart");
-        energyStorage = new EnergyStorageGenerator(STORAGE, 0, MAX_OUT, compound.getInteger("storage"));
+        energyStorage = new EnergyStorageInternal(STORAGE, 0, MAX_OUT, compound.getInteger("storage"));
         itemStack.deserializeNBT(compound.getCompoundTag("inventory"));
     }
 

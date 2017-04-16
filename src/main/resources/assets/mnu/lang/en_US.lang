@@ -8,6 +8,9 @@ item.mnu:dm_scanner.tip2=the area for Dark Matter
 
 itemGroup.mnu=MNU
 
+msg.dm_pump.energy=Energy: %s / %s
+msg.dm_pump.tank=%s: %s mB / %s mB
+msg.dm_pump.tank.empty=Tank Empty
 msg.dm_pump.tip=* Place above Bedrock block
 msg.dm_pump.tip2=* Insert Energy
 msg.fe_gen.energy=Energy: %s / %s
