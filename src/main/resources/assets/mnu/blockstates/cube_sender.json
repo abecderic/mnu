@@ -1,0 +1,18 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "normal": { "model": "mnu:cube_sender" },
+    "facing=down,redstone=true" : { "model": "mnu:cube_sender" },
+    "facing=up,redstone=true" : { "model": "mnu:cube_sender", "x": 180 },
+    "facing=north,redstone=true" : { "model": "mnu:cube_sender", "x": 90, "y": 180 },
+    "facing=east,redstone=true" : { "model": "mnu:cube_sender", "x": 90, "y": 270 },
+    "facing=south,redstone=true" : { "model": "mnu:cube_sender", "x": 90 },
+    "facing=west,redstone=true" : { "model": "mnu:cube_sender", "x": 90, "y": 90 },
+    "facing=down,redstone=false" : { "model": "mnu:cube_sender" },
+    "facing=up,redstone=false" : { "model": "mnu:cube_sender", "x": 180 },
+    "facing=north,redstone=false" : { "model": "mnu:cube_sender", "x": 90, "y": 180 },
+    "facing=east,redstone=false" : { "model": "mnu:cube_sender", "x": 90, "y": 270 },
+    "facing=south,redstone=false" : { "model": "mnu:cube_sender", "x": 90 },
+    "facing=west,redstone=false" : { "model": "mnu:cube_sender", "x": 90, "y": 90 }
+  }
+}

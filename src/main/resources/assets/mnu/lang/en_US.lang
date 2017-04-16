@@ -19,6 +19,7 @@ msg.fe_gen.tip=Insert burnable material
 msg.fe_gen.tip2=via automatic ways.
 msg.fe_gen.tip3=(e.g. with a hopper)
 
+tile.mnu:cube_sender.name=Cube Sender
 tile.mnu:dm_pump.name=Dark Matter Pump
 tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter

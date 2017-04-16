@@ -1,6 +1,7 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
+import com.abecderic.mnu.item.ItemBlockCubeSender;
 import com.abecderic.mnu.item.ItemBlockTooltip;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -19,6 +20,9 @@ public class MNUBlocks
     public static final String DM_PUMP = "dm_pump";
     public static Block dmPump;
 
+    public static final String CUBE_SENDER = "cube_sender";
+    public static Block cubeSender;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -28,6 +32,10 @@ public class MNUBlocks
         dmPump = new BlockDMPump();
         registerBlockWithItemBlock(dmPump, DM_PUMP, new ItemBlockTooltip(dmPump, "msg.dm_pump.tip", "msg.dm_pump.tip2"));
         registerTileEntity(dmPump, DM_PUMP, TileEntityDMPump.class);
+
+        cubeSender = new BlockCubeSender();
+        registerBlockWithItemBlock(cubeSender, CUBE_SENDER, new ItemBlockCubeSender(cubeSender));
+        registerTileEntity(cubeSender, CUBE_SENDER, TileEntityCubeSender.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -56,6 +64,7 @@ public class MNUBlocks
     {
         registerModel(feGen, FE_GEN);
         registerModel(dmPump, DM_PUMP);
+        registerModel(cubeSender, CUBE_SENDER);
     }
 
     private static void registerModel(Block block, String name)
