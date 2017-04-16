@@ -51,7 +51,7 @@ public class BlockCubeSender extends BlockContainer
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facingIn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
-        return this.getDefaultState().withProperty(FACING, facingIn);
+        return this.getDefaultState().withProperty(FACING, facingIn).withProperty(REDSTONE, false);
     }
 
     @Override
@@ -95,6 +95,7 @@ public class BlockCubeSender extends BlockContainer
                 if (te instanceof TileEntityCubeSender)
                 {
                     playerIn.openGui(MNU.instance, GuiHandler.GUIs.CUBE_SENDER.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
+                    ((TileEntityCubeSender) te).sendUpdatePacket(playerIn);
                 }
                 return true;
             }

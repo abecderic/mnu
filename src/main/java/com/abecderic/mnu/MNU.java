@@ -5,6 +5,7 @@ import com.abecderic.mnu.entity.MNUEntities;
 import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.gui.GuiHandler;
 import com.abecderic.mnu.item.MNUItems;
+import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -56,6 +57,7 @@ public class MNU
     public void init(FMLInitializationEvent event)
     {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        MNUNetwork.init();
         proxy.registerModels();
     }
 }

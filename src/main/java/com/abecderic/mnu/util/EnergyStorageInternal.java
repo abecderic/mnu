@@ -38,6 +38,11 @@ public class EnergyStorageInternal extends EnergyStorage
         super.energy = Math.max(super.energy - energy, 0);
     }
 
+    public void setEnergy(int energy)
+    {
+        super.energy = energy;
+    }
+
     public String getEnergyStoredText()
     {
         return df.format(super.getEnergyStored());

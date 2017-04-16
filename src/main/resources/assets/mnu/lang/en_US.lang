@@ -3,6 +3,9 @@ entity.cube.name=Cube
 fluid.fluid_darkmatter=Dark Matter
 fluid.fluid_mnu=MNU
 
+gui.cube_sender.energy=Energy
+gui.cube_sender.energy.value=%s / %s
+
 item.mnu:dm_scanner.name=Dark Matter Scanner
 item.mnu:dm_scanner.result=Estimated deposit size: %s
 item.mnu:dm_scanner.tip=Use on a block to scan

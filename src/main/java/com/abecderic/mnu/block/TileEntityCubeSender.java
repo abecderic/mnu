@@ -1,16 +1,17 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.entity.EntityCube;
+import com.abecderic.mnu.network.MNUNetwork;
+import com.abecderic.mnu.network.PacketCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -60,7 +61,8 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 }
             }
 
-            sendCube();
+            // TODO uncomment
+            //sendCube();
         }
     }
 
@@ -140,13 +142,16 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return false;
     }
 
-    public ITextComponent getEnergyString()
-    {
-        return new TextComponentTranslation("msg.fe_gen.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
-    }
-
     public boolean canInteractWith(EntityPlayer playerIn)
     {
         return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
+    public void sendUpdatePacket(EntityPlayer playerIn)
+    {
+        if (!world.isRemote)
+        {
+            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored()), (EntityPlayerMP) playerIn);
+        }
     }
 }
