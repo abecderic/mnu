@@ -5,6 +5,7 @@ item.mnu:dm_scanner.name=Dark Matter Scanner
 item.mnu:dm_scanner.result=Estimated deposit size: %s
 item.mnu:dm_scanner.tip=Use on a block to scan
 item.mnu:dm_scanner.tip2=the area for Dark Matter
+item.mnu:wrench.name=Wrench
 
 itemGroup.mnu=MNU
 
