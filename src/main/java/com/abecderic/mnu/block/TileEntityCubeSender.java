@@ -4,10 +4,12 @@ import com.abecderic.mnu.entity.EntityCube;
 import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.network.PacketCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
+import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -28,8 +30,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private static final int CUBE_ENERGY_PER_HOP = 2048;
     private static final int CUBE_HOPS = 3;
     public static final int BUFFER_SIZE = 9;
+    private static final int TANKS = 4;
     private ItemStackHandler inventory = new ItemStackHandler(BUFFER_SIZE);
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
+    private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS);
     private int tickPart;
 
     public TileEntityCubeSender()
@@ -50,7 +54,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 if (te != null)
                 {
                     IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
-                    if (energy != null)
+                    if (energy != null && energy.getEnergyStored() < energy.getMaxEnergyStored())
                     {
                         int extracted = energy.extractEnergy(Math.min(MAX_TRANSFER * 20, energy.getMaxEnergyStored() - energy.getEnergyStored()), false);
                         if (extracted > 0)
@@ -63,6 +67,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
 
             // TODO uncomment
             //sendCube();
+            markDirty();
         }
     }
 
@@ -84,8 +89,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return super.hasCapability(capability, facing);
     }
 
-    // TODO save and load all the capability things
-
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing)
@@ -96,14 +99,32 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         }
         else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
         {
-            // TODO implement
-            //return (T) fluidTank;
+            return (T) tanks;
         }
         else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
         {
             return (T) inventory;
         }
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER, compound.getInteger("storage"));
+        inventory.deserializeNBT(compound.getCompoundTag("buffer"));
+        tanks.deserializeNBT(compound.getCompoundTag("tanks"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        compound = super.writeToNBT(compound);
+        compound.setInteger("storage", energyStorage.getEnergyStored());
+        compound.setTag("buffer", inventory.serializeNBT());
+        compound.setTag("tanks", tanks.serializeNBT());
+        return compound;
     }
 
     private boolean sendCube()
