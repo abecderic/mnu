@@ -1,9 +1,11 @@
 package com.abecderic.mnu.entity;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
+import com.abecderic.mnu.util.DataSerializerFluid;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -15,10 +17,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class EntityCube extends EntityThrowable
 {
     private static final DataParameter<Integer> ENERGY = EntityDataManager.createKey(EntityCube.class, DataSerializers.VARINT);
+    private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(EntityCube.class, DataSerializers.OPTIONAL_ITEM_STACK);
+    private static final DataParameter<FluidStack> FLUID = EntityDataManager.createKey(EntityCube.class, DataSerializerFluid.OPTIONAL_FLUID_STACK);
 
     public EntityCube(World worldIn)
     {
@@ -30,6 +35,8 @@ public class EntityCube extends EntityThrowable
     {
         super.entityInit();
         this.getDataManager().register(ENERGY, 0);
+        this.getDataManager().register(ITEM, ItemStack.EMPTY);
+        this.getDataManager().register(FLUID, null);
     }
 
     @Override
@@ -110,7 +117,7 @@ public class EntityCube extends EntityThrowable
         /* debug */
         if (!world.isRemote)
         {
-            System.out.println("Cube splat: " + this + ", Energy: " + getEnergy());
+            System.out.println("Cube splat: " + this + ", Energy: " + getEnergy() + ", Item: " + getItem() + ", Fluid: " + getFluid().amount + "x" + getFluid().getLocalizedName());
         }
     }
 
@@ -122,5 +129,25 @@ public class EntityCube extends EntityThrowable
     public void setEnergy(int energy)
     {
         getDataManager().set(ENERGY, energy);
+    }
+
+    public ItemStack getItem()
+    {
+        return getDataManager().get(ITEM);
+    }
+
+    public void setItem(ItemStack item)
+    {
+        getDataManager().set(ITEM, item);
+    }
+
+    public FluidStack getFluid()
+    {
+        return getDataManager().get(FLUID);
+    }
+
+    public void setFluid(FluidStack fluid)
+    {
+        getDataManager().set(FLUID, fluid);
     }
 }

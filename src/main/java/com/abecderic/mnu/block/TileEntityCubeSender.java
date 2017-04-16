@@ -1,7 +1,10 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.entity.EntityCube;
+import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.util.EnergyStorageInternal;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -10,6 +13,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
 
 public class TileEntityCubeSender extends TileEntity implements ITickable
 {
@@ -58,7 +62,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         // TODO enable cubes using energy again
         //if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP)
         {
-            energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP);
             int energy = 0;
             for (int i = 0; i < CUBE_HOPS; i++)
             {
@@ -71,15 +74,18 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     break;
                 }
             }
-            energyStorage.removeEnergy(energy);
             EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
             BlockPos pos = this.pos.offset(facing);
             if (world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos))
             {
+                energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP);
+                energyStorage.removeEnergy(energy);
                 EntityCube cube = new EntityCube(world);
                 cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
                 cube.setEnergy(energy);
+                cube.setFluid(new FluidStack(MNUFluids.fluidMNU, 1000));
+                cube.setItem(new ItemStack(Items.GOLD_INGOT, 42));
                 world.spawnEntity(cube);
                 return true;
             }
