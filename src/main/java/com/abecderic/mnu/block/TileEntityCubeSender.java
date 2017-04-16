@@ -18,11 +18,18 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private static final int CUBE_ENERGY_PER_HOP = 2048;
     private static final int CUBE_HOPS = 3;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
+    private int tickPart;
+
+    public TileEntityCubeSender()
+    {
+        super();
+        tickPart = (int)(Math.random() * 20D);
+    }
 
     @Override
     public void update()
     {
-        if (!world.isRemote && world.getTotalWorldTime() % 20 == 0)
+        if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
             for (EnumFacing facing : EnumFacing.VALUES)
             {

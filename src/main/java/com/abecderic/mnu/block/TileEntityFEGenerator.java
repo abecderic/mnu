@@ -19,9 +19,7 @@ import javax.annotation.Nullable;
 public class TileEntityFEGenerator extends TileEntity implements ITickable
 {
     private static final int STORAGE = 512000;
-    //private static final int MAX_OUT = 128;
-    // TODO nerf
-    private static final int MAX_OUT = Integer.MAX_VALUE;
+    private static final int MAX_OUT = 2560;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, 0, MAX_OUT);
     private ItemFuelHandler itemStack = new ItemFuelHandler(1);
     private int tickPart = 0;
