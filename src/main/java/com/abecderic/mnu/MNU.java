@@ -3,6 +3,7 @@ package com.abecderic.mnu;
 import com.abecderic.mnu.block.MNUBlocks;
 import com.abecderic.mnu.entity.MNUEntities;
 import com.abecderic.mnu.fluid.MNUFluids;
+import com.abecderic.mnu.gui.GuiHandler;
 import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 @Mod(modid = MNU.MODID, name = MNU.MODNAME, version = MNU.VERSION)
 public class MNU
@@ -53,6 +55,7 @@ public class MNU
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         proxy.registerModels();
     }
 }

@@ -1,6 +1,7 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
+import com.abecderic.mnu.gui.GuiHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -93,8 +94,7 @@ public class BlockCubeSender extends BlockContainer
                 TileEntity te = worldIn.getTileEntity(pos);
                 if (te instanceof TileEntityCubeSender)
                 {
-                    TileEntityCubeSender cubeSender = (TileEntityCubeSender) te;
-                    playerIn.sendMessage(cubeSender.getEnergyString());
+                    playerIn.openGui(MNU.instance, GuiHandler.GUIs.CUBE_SENDER.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
                 }
                 return true;
             }
