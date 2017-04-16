@@ -1,7 +1,6 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.entity.EntityCube;
-import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -13,7 +12,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidStack;
 
 public class TileEntityCubeSender extends TileEntity implements ITickable
 {
@@ -84,7 +82,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
                 cube.setEnergy(energy);
-                cube.setFluid(new FluidStack(MNUFluids.fluidMNU, 1000));
+                //cube.setFluid(new FluidStack(MNUFluids.fluidMNU, 1000));
                 cube.setItem(new ItemStack(Items.GOLD_INGOT, 42));
                 world.spawnEntity(cube);
                 return true;

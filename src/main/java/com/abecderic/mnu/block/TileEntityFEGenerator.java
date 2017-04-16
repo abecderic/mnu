@@ -34,7 +34,7 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
             tickPart--;
             energyStorage.addEnergy(64);
         }
-        else if (itemStack.getStackInSlot(0) != ItemStack.EMPTY)
+        else if (!itemStack.getStackInSlot(0).isEmpty())
         {
             if (energyStorage.getEnergyStored() + TileEntityFurnace.getItemBurnTime(itemStack.getStackInSlot(0)) <= energyStorage.getMaxEnergyStored())
             {

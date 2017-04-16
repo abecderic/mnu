@@ -53,7 +53,7 @@ public class RenderCube extends Render<EntityCube>
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
 
-        if (entity.getItem() != ItemStack.EMPTY)
+        if (!entity.getItem().isEmpty())
         {
             doRenderItem(entity, entity.getItem());
         }

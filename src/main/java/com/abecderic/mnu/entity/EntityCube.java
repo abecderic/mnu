@@ -108,7 +108,7 @@ public class EntityCube extends EntityThrowable
             }
             EnumParticleTypes type = EnumParticleTypes.BLOCK_CRACK;
             int particleId = 0;
-            if (getItem() != ItemStack.EMPTY)
+            if (!getItem().isEmpty())
             {
                 if (getItem().getItem() instanceof ItemBlock)
                 {
