@@ -5,6 +5,7 @@ import com.abecderic.mnu.util.DataSerializerFluid;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -16,7 +17,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 public class EntityCube extends EntityThrowable
@@ -106,10 +106,31 @@ public class EntityCube extends EntityThrowable
                 case 0: particleAmount = 8; break;
                 case 1: particleAmount = 1; break;
             }
+            EnumParticleTypes type = EnumParticleTypes.BLOCK_CRACK;
+            int particleId = 0;
+            if (getItem() != ItemStack.EMPTY)
+            {
+                if (getItem().getItem() instanceof ItemBlock)
+                {
+                    particleId = Block.getIdFromBlock(((ItemBlock) getItem().getItem()).block);
+                }
+                else
+                {
+                    particleId = ItemBlock.getIdFromItem(getItem().getItem());
+                    type = EnumParticleTypes.ITEM_CRACK;
+                }
+            }
+            else if (getFluid() != null)
+            {
+                particleId = Block.getIdFromBlock(getFluid().getFluid().getBlock());
+            }
             for (int i = 0; i < particleAmount; i++)
             {
                 world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0);
-                world.spawnParticle(EnumParticleTypes.BLOCK_CRACK, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0, Block.getIdFromBlock(FluidRegistry.LAVA.getBlock()));
+                if (particleId > 0)
+                {
+                    world.spawnParticle(type, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0, particleId);
+                }
             }
         }
 
@@ -117,7 +138,18 @@ public class EntityCube extends EntityThrowable
         /* debug */
         if (!world.isRemote)
         {
-            System.out.println("Cube splat: " + this + ", Energy: " + getEnergy() + ", Item: " + getItem() + ", Fluid: " + getFluid().amount + "x" + getFluid().getLocalizedName());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cube splat: ").append(this).append(", Energy:").append(getEnergy());
+            sb.append(", Item: ").append(getItem()).append(", Fluid: ");
+            if (getFluid() == null)
+            {
+                sb.append("null");
+            }
+            else
+            {
+                sb.append(getFluid().amount).append("x").append(getFluid().getLocalizedName());
+            }
+            System.out.println(sb.toString());
         }
     }
 

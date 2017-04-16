@@ -8,14 +8,15 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -52,7 +53,46 @@ public class RenderCube extends Render<EntityCube>
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
 
-        Fluid fluid = FluidRegistry.LAVA;
+        if (entity.getItem() != ItemStack.EMPTY)
+        {
+            doRenderItem(entity, entity.getItem());
+        }
+        else if (entity.getFluid() != null)
+        {
+            doRenderFluid(entity.getFluid().getFluid());
+        }
+        else
+        {
+            renderManager.renderEngine.bindTexture(TEXTURE);
+            cube.render(0.03125f);
+        }
+
+        GlStateManager.popMatrix();
+        Minecraft.getMinecraft().mcProfiler.endSection();
+    }
+
+    private void doRenderItem(EntityCube entity, ItemStack item)
+    {
+        GlStateManager.scale(0.5f, 0.5f, 0.5f);
+        double angle = 0.0D;
+        if (entity.motionZ < 0)
+        {
+            angle = 90.0D;
+        }
+        else if (entity.motionZ > 0)
+        {
+            angle = 270.0D;
+        }
+        else if (entity.motionX < 0)
+        {
+            angle = 180.0D;
+        }
+        GL11.glRotated(angle, 0.0D, 1.0D, 0.0D);
+        Minecraft.getMinecraft().getRenderItem().renderItem(item, ItemCameraTransforms.TransformType.FIXED);
+    }
+
+    private void doRenderFluid(Fluid fluid)
+    {
         TextureMap map = Minecraft.getMinecraft().getTextureMapBlocks();
         TextureAtlasSprite sprite = map.getTextureExtry(fluid.getStill().toString());
         if (sprite == null) {
@@ -105,7 +145,5 @@ public class RenderCube extends Render<EntityCube>
 
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
-        Minecraft.getMinecraft().mcProfiler.endSection();
     }
 }
