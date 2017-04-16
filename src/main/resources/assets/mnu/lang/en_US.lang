@@ -5,6 +5,9 @@ fluid.fluid_mnu=MNU
 
 gui.cube_sender.energy=Energy
 gui.cube_sender.energy.value=%s / %s
+gui.cube_sender.fluid=%s
+gui.cube_sender.tank.empty=Tank Empty
+gui.cube_sender.tank.value=%s mB / %s mB
 
 item.mnu:dm_scanner.name=Dark Matter Scanner
 item.mnu:dm_scanner.result=Estimated deposit size: %s

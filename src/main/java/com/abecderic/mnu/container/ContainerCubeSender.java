@@ -98,6 +98,7 @@ public class ContainerCubeSender extends Container
                 }
             }
         }
+        // TODO detect changes in tanks
     }
 
     @Override

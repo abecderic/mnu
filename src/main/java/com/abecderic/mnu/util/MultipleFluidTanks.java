@@ -77,6 +77,15 @@ public class MultipleFluidTanks implements IFluidHandler
         return null;
     }
 
+    public FluidTank getTank(int i)
+    {
+        if (i >= 0 && i < amount)
+        {
+            return tanks[i];
+        }
+        return null;
+    }
+
     public void deserializeNBT(NBTTagCompound compound)
     {
         amount = compound.getInteger("size");
