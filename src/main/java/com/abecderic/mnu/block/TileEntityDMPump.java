@@ -4,6 +4,8 @@ import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.util.DarkMatterDeposits;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.MicrobucketsFluidTank;
+import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -48,8 +50,11 @@ public class TileEntityDMPump extends TileEntity implements ITickable
             {
                 if (fluidTank.getMicrobucketsCapacity() - fluidTank.getMicrobucketsVolume() >= dmSize)
                 {
-                    energyStorage.removeEnergy(ENERGY_USAGE);
-                    fluidTank.fillMicrobuckets(MNUFluids.fluidDarkMatter, dmSize);
+                    if (world.getBlockState(pos.down()).getBlock() == Blocks.BEDROCK)
+                    {
+                        energyStorage.removeEnergy(ENERGY_USAGE);
+                        fluidTank.fillMicrobuckets(MNUFluids.fluidDarkMatter, dmSize);
+                    }
                 }
             }
             else
@@ -122,5 +127,22 @@ public class TileEntityDMPump extends TileEntity implements ITickable
             }
         }
         return new TextComponentTranslation("msg.dm_pump.tank.empty");
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0, compound.getInteger("storage"));
+        fluidTank.deserializeNBT(compound.getCompoundTag("tank"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        compound = super.writeToNBT(compound);
+        compound.setInteger("storage", energyStorage.getEnergyStored());
+        compound.setTag("tank", fluidTank.serializeNBT());
+        return compound;
     }
 }

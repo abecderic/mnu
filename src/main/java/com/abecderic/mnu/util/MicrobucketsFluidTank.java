@@ -1,12 +1,14 @@
 package com.abecderic.mnu.util;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.*;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
-public class MicrobucketsFluidTank implements IFluidTank
+public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTagCompound>
 {
     private DecimalFormat df = new DecimalFormat("#,##0.000");
 
@@ -265,5 +267,29 @@ public class MicrobucketsFluidTank implements IFluidTank
     public int getMicrobucketsVolume()
     {
         return microbucketsVolume;
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        if (fluid != null)
+        {
+            compound.setString("fluid", fluid.getName());
+        }
+        compound.setInteger("capacity", microbucketsCapacity);
+        compound.setInteger("volume", microbucketsVolume);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound compound)
+    {
+        if (compound.hasKey("fluid"))
+        {
+            fluid = FluidRegistry.getFluid(compound.getString("fluid"));
+        }
+        microbucketsCapacity = compound.getInteger("capacity");
+        microbucketsVolume = compound.getInteger("volume");
     }
 }
