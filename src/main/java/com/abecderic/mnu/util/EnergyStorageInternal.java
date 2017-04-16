@@ -2,8 +2,12 @@ package com.abecderic.mnu.util;
 
 import net.minecraftforge.energy.EnergyStorage;
 
+import java.text.DecimalFormat;
+
 public class EnergyStorageInternal extends EnergyStorage
 {
+    private DecimalFormat df = new DecimalFormat("#,##0");
+
     public EnergyStorageInternal(int capacity)
     {
         super(capacity);
@@ -32,5 +36,15 @@ public class EnergyStorageInternal extends EnergyStorage
     public void removeEnergy(int energy)
     {
         super.energy = Math.max(super.energy - energy, 0);
+    }
+
+    public String getEnergyStoredText()
+    {
+        return df.format(super.getEnergyStored());
+    }
+
+    public String getMaxEnergyStoredText()
+    {
+        return df.format(super.getMaxEnergyStored());
     }
 }

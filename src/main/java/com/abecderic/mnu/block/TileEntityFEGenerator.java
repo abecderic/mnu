@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public class TileEntityFEGenerator extends TileEntity implements ITickable
 {
-    private static final int STORAGE = 128000;
+    private static final int STORAGE = 512000;
     private static final int MAX_OUT = 128;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, 0, MAX_OUT);
     private ItemFuelHandler itemStack = new ItemFuelHandler(1);
@@ -39,7 +39,7 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
             if (energyStorage.getEnergyStored() + TileEntityFurnace.getItemBurnTime(itemStack.getStackInSlot(0)) <= energyStorage.getMaxEnergyStored())
             {
                 ItemStack fuel = itemStack.getStackInSlot(0).splitStack(1);
-                tickPart += TileEntityFurnace.getItemBurnTime(fuel) / 2;
+                tickPart += TileEntityFurnace.getItemBurnTime(fuel) / 4;
             }
         }
     }
@@ -94,7 +94,7 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
 
     public ITextComponent getEnergyString()
     {
-        return new TextComponentTranslation("msg.fe_gen.energy", energyStorage.getEnergyStored(), energyStorage.getMaxEnergyStored());
+        return new TextComponentTranslation("msg.fe_gen.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
     }
 
     public ItemStack getFuel()

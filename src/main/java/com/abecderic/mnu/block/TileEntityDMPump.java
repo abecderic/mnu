@@ -78,7 +78,7 @@ public class TileEntityDMPump extends TileEntity implements ITickable
 
     public ITextComponent getEnergyString()
     {
-        return new TextComponentTranslation("msg.dm_pump.energy", energyStorage.getEnergyStored(), energyStorage.getMaxEnergyStored());
+        return new TextComponentTranslation("msg.dm_pump.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
     }
 
     public ITextComponent getTankString()
