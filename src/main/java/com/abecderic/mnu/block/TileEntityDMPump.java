@@ -68,11 +68,10 @@ public class TileEntityDMPump extends TileEntity implements ITickable
                         IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
                         if (energy != null)
                         {
-                            int extracted = energy.extractEnergy(MAX_IN * 20, false);
+                            int extracted = energy.extractEnergy(Math.min(MAX_IN * 20, energy.getMaxEnergyStored() - energy.getEnergyStored()), false);
                             if (extracted > 0)
                             {
                                 energyStorage.addEnergy(extracted);
-                                break;
                             }
                         }
                     }

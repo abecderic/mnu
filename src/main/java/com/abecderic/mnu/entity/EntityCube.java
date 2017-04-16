@@ -77,5 +77,22 @@ public class EntityCube extends EntityThrowable
         {
             world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0);
         }
+
+        // TODO remove
+        /* debug */
+        if (!world.isRemote)
+        {
+            System.out.println("Cube splat: " + this + ", Energy: " + getEnergy());
+        }
+    }
+
+    public int getEnergy()
+    {
+        return getDataManager().get(ENERGY);
+    }
+
+    public void setEnergy(int energy)
+    {
+        getDataManager().set(ENERGY, energy);
     }
 }

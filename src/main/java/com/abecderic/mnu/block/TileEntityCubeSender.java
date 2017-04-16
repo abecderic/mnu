@@ -8,11 +8,15 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileEntityCubeSender extends TileEntity implements ITickable
 {
     private static final int STORAGE = 512000;
     private static final int MAX_TRANSFER = 128;
+    private static final int CUBE_ENERGY_PER_HOP = 2048;
+    private static final int CUBE_HOPS = 3;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
 
     @Override
@@ -20,18 +24,49 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote && world.getTotalWorldTime() % 20 == 0)
         {
-            EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
-            BlockPos pos = this.pos.offset(facing);
-            EntityCube cube = new EntityCube(world);
-            cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
-            world.spawnEntity(cube);
+            for (EnumFacing facing : EnumFacing.VALUES)
+            {
+                BlockPos pos = getPos().offset(facing);
+                TileEntity te = world.getTileEntity(pos);
+                if (te != null)
+                {
+                    IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
+                    if (energy != null)
+                    {
+                        int extracted = energy.extractEnergy(Math.min(MAX_TRANSFER * 20, energy.getMaxEnergyStored() - energy.getEnergyStored()), false);
+                        if (extracted > 0)
+                        {
+                            energyStorage.addEnergy(extracted);
+                        }
+                    }
+                }
+            }
+
+            if (energyStorage.getEnergyStored() >= (CUBE_HOPS + 1) * CUBE_ENERGY_PER_HOP)
+            {
+                energyStorage.removeEnergy((CUBE_HOPS + 1) * CUBE_ENERGY_PER_HOP);
+                sendCube(CUBE_HOPS * CUBE_ENERGY_PER_HOP);
+            }
         }
+    }
+
+    private void sendCube(int energy)
+    {
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
+        BlockPos pos = this.pos.offset(facing);
+        EntityCube cube = new EntityCube(world);
+        cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
+        cube.setEnergy(energy);
+        world.spawnEntity(cube);
     }
 
     public void receiveCube(EntityCube cube)
     {
-
+        if (cube.getEnergy() >= CUBE_ENERGY_PER_HOP)
+        {
+            sendCube(cube.getEnergy() - CUBE_ENERGY_PER_HOP);
+        }
     }
 
     public ITextComponent getEnergyString()
