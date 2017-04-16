@@ -42,31 +42,46 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 }
             }
 
-            if (energyStorage.getEnergyStored() >= (CUBE_HOPS + 1) * CUBE_ENERGY_PER_HOP)
-            {
-                energyStorage.removeEnergy((CUBE_HOPS + 1) * CUBE_ENERGY_PER_HOP);
-                sendCube(CUBE_HOPS * CUBE_ENERGY_PER_HOP);
-            }
+            sendCube();
         }
     }
 
-    private void sendCube(int energy)
+    private boolean sendCube()
     {
-        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
-        BlockPos pos = this.pos.offset(facing);
-        EntityCube cube = new EntityCube(world);
-        cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-        cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
-        cube.setEnergy(energy);
-        world.spawnEntity(cube);
+        if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP)
+        {
+            energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP);
+            int energy = 0;
+            for (int i = 0; i < CUBE_HOPS; i++)
+            {
+                if (energyStorage.getEnergyStored() >= i * CUBE_ENERGY_PER_HOP)
+                {
+                    energy = i * CUBE_ENERGY_PER_HOP;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            energyStorage.removeEnergy(energy);
+            EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
+            BlockPos pos = this.pos.offset(facing);
+            if (world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos))
+            {
+                EntityCube cube = new EntityCube(world);
+                cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
+                cube.setEnergy(energy);
+                world.spawnEntity(cube);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void receiveCube(EntityCube cube)
     {
-        if (cube.getEnergy() >= CUBE_ENERGY_PER_HOP)
-        {
-            sendCube(cube.getEnergy() - CUBE_ENERGY_PER_HOP);
-        }
+        energyStorage.addEnergy(cube.getEnergy());
     }
 
     public ITextComponent getEnergyString()
