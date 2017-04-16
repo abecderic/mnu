@@ -47,6 +47,7 @@ public class MNU
         MNUItems.registerItems();
         MNUFluids.registerFluids();
         MNUEntities.registerEntities();
+        proxy.registerRenderers();
     }
 
     @Mod.EventHandler
