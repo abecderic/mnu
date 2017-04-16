@@ -1,6 +1,8 @@
 package com.abecderic.mnu.entity;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -11,6 +13,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidRegistry;
 
 public class EntityCube extends EntityThrowable
 {
@@ -42,7 +46,10 @@ public class EntityCube extends EntityThrowable
 
         if (!world.isRemote)
         {
-            //System.out.println(posX + ", " + posY + ", " + posZ + " (" + motionX + ", " + motionY + ", " + motionZ + ")");
+            if (posY >= world.getHeight() || ticksExisted >= 200 || posY < 0)
+            {
+                this.kill();
+            }
         }
     }
 
@@ -75,14 +82,28 @@ public class EntityCube extends EntityThrowable
 
     private void receiveCube(TileEntityCubeSender receiver)
     {
-        receiver.getCapability(CapabilityEnergy.ENERGY, EnumFacing.getFacingFromVector((float)motionX, (float)motionY, (float)motionZ).getOpposite()).receiveEnergy(getEnergy(), false);
+        IEnergyStorage storage = receiver.getCapability(CapabilityEnergy.ENERGY, EnumFacing.getFacingFromVector((float)motionX, (float)motionY, (float)motionZ).getOpposite());
+        if (storage != null)
+        {
+            storage.receiveEnergy(getEnergy(), false);
+        }
     }
 
     private void splat()
     {
-        for (int i = 0; i < 8; i++)
+        if (world.isRemote)
         {
-            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0);
+            int particleAmount = 0;
+            switch (Minecraft.getMinecraft().gameSettings.particleSetting)
+            {
+                case 0: particleAmount = 8; break;
+                case 1: particleAmount = 1; break;
+            }
+            for (int i = 0; i < particleAmount; i++)
+            {
+                world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0);
+                world.spawnParticle(EnumParticleTypes.BLOCK_CRACK, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0, Block.getIdFromBlock(FluidRegistry.LAVA.getBlock()));
+            }
         }
 
         // TODO remove

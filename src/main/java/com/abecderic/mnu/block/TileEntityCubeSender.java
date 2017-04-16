@@ -55,7 +55,8 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
 
     private boolean sendCube()
     {
-        if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP)
+        // TODO enable cubes using energy again
+        //if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP)
         {
             energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP);
             int energy = 0;
