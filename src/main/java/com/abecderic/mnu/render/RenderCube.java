@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 public class RenderCube extends Render<EntityCube>
 {
     private static final ResourceLocation TEXTURE = new ResourceLocation(MNU.MODID, "textures/entity/cube.png");
+    private static final ResourceLocation TEXTURE_OVERLAY = new ResourceLocation(MNU.MODID, "textures/entity/cube_overlay.png");
 
     private ModelBase model = new ModelBase() {};
     private ModelRenderer cube;
@@ -67,13 +69,24 @@ public class RenderCube extends Render<EntityCube>
             cube.render(0.03125f);
         }
 
+        renderManager.renderEngine.bindTexture(TEXTURE_OVERLAY);
+        cube.render(0.0325f);
+
         GlStateManager.popMatrix();
         Minecraft.getMinecraft().mcProfiler.endSection();
     }
 
     private void doRenderItem(EntityCube entity, ItemStack item)
     {
-        GlStateManager.scale(0.5f, 0.5f, 0.5f);
+        GlStateManager.pushMatrix();
+        if (item.getItem() instanceof ItemBlock)
+        {
+            GlStateManager.scale(0.75f, 0.75f, 0.75f);
+        }
+        else
+        {
+            GlStateManager.scale(0.5f, 0.5f, 0.5f);
+        }
         double angle = 0.0D;
         if (entity.motionZ < 0)
         {
@@ -89,6 +102,7 @@ public class RenderCube extends Render<EntityCube>
         }
         GL11.glRotated(angle, 0.0D, 1.0D, 0.0D);
         Minecraft.getMinecraft().getRenderItem().renderItem(item, ItemCameraTransforms.TransformType.FIXED);
+        GlStateManager.popMatrix();
     }
 
     private void doRenderFluid(Fluid fluid)
@@ -104,8 +118,9 @@ public class RenderCube extends Render<EntityCube>
         GlStateManager.pushMatrix();
         GlStateManager.color(1, 1, 1);
         GlStateManager.scale(0.25f, 0.25f, 0.25f);
-        GlStateManager.translate(0, 0, 0);
         GlStateManager.disableLighting();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vbo = tessellator.getBuffer();
@@ -143,6 +158,7 @@ public class RenderCube extends Render<EntityCube>
         vbo.pos(1D, -1D, -1D).tex(sprite.getMinU(), sprite.getMaxV()).lightmap(lightmap, lightmap).color(1F, 1F, 1F, 1F).endVertex();
         tessellator.draw();
 
+        GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
     }
