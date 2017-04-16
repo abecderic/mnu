@@ -256,4 +256,14 @@ public class MicrobucketsFluidTank implements IFluidTank
     {
         return df.format(microbucketsCapacity / 1000D);
     }
+
+    public int getMicrobucketsCapacity()
+    {
+        return microbucketsCapacity;
+    }
+
+    public int getMicrobucketsVolume()
+    {
+        return microbucketsVolume;
+    }
 }
