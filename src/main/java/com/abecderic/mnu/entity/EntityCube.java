@@ -6,9 +6,11 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.CapabilityEnergy;
 
 public class EntityCube extends EntityThrowable
 {
@@ -54,7 +56,7 @@ public class EntityCube extends EntityThrowable
             {
                 if (!world.isRemote)
                 {
-                    ((TileEntityCubeSender) te).receiveCube(this);
+                    receiveCube((TileEntityCubeSender) te);
                     this.world.setEntityState(this, (byte)3);
                     this.setDead();
                 }
@@ -69,6 +71,11 @@ public class EntityCube extends EntityThrowable
             splat();
         }
         this.kill();
+    }
+
+    private void receiveCube(TileEntityCubeSender receiver)
+    {
+        receiver.getCapability(CapabilityEnergy.ENERGY, EnumFacing.getFacingFromVector((float)motionX, (float)motionY, (float)motionZ).getOpposite()).receiveEnergy(getEnergy(), false);
     }
 
     private void splat()

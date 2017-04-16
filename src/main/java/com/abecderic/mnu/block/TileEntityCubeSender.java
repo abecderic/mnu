@@ -79,11 +79,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return false;
     }
 
-    public void receiveCube(EntityCube cube)
-    {
-        energyStorage.addEnergy(cube.getEnergy());
-    }
-
     public ITextComponent getEnergyString()
     {
         return new TextComponentTranslation("msg.fe_gen.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
