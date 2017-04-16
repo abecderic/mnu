@@ -88,6 +88,16 @@ public class BlockCubeSender extends BlockContainer
                 worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(FACING, facing));
                 return true;
             }
+            else if (hand == EnumHand.MAIN_HAND)
+            {
+                TileEntity te = worldIn.getTileEntity(pos);
+                if (te instanceof TileEntityCubeSender)
+                {
+                    TileEntityCubeSender cubeSender = (TileEntityCubeSender) te;
+                    playerIn.sendMessage(cubeSender.getEnergyString());
+                }
+                return true;
+            }
         }
         return false;
     }
@@ -96,7 +106,7 @@ public class BlockCubeSender extends BlockContainer
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
-        return null;
+        return new TileEntityCubeSender();
     }
 
     @Override
