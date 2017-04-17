@@ -4,11 +4,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
-public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTagCompound>
+public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTagCompound>, IFluidTankProperties
 {
     private DecimalFormat df = new DecimalFormat("#,##0.000");
 
@@ -49,6 +50,13 @@ public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTa
     public int getFluidAmount()
     {
         return microbucketsVolume / 1000;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack getContents()
+    {
+        return getFluid();
     }
 
     @Override
@@ -166,6 +174,18 @@ public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTa
         return filled;
     }
 
+    public FluidStack drain(FluidStack stack, boolean doDrain)
+    {
+        if (stack.getFluid() == fluid)
+        {
+            return drain(stack.amount, doDrain);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     @Nullable
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
@@ -242,6 +262,18 @@ public class MicrobucketsFluidTank implements IFluidTank, INBTSerializable<NBTTa
     public boolean canDrain()
     {
         return canDrain;
+    }
+
+    @Override
+    public boolean canFillFluidType(FluidStack fluidStack)
+    {
+        return canFill && (getFluidAmount() == 0 || fluidStack.getFluid() == fluid);
+    }
+
+    @Override
+    public boolean canDrainFluidType(FluidStack fluidStack)
+    {
+        return canDrain && getFluidAmount() > 0 && fluidStack.getFluid() == fluid;
     }
 
     public void setCanDrain(boolean canDrain)

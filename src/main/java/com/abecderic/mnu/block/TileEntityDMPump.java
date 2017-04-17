@@ -4,6 +4,7 @@ import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.util.DarkMatterDeposits;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.MicrobucketsFluidTank;
+import com.abecderic.mnu.util.MicrobucketsFluidTankHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,6 +31,7 @@ public class TileEntityDMPump extends TileEntity implements ITickable
     private static final int TANK_STORAGE = 8000000;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0);
     private MicrobucketsFluidTank fluidTank = new MicrobucketsFluidTank(TANK_STORAGE);
+    private MicrobucketsFluidTankHandler handler = new MicrobucketsFluidTankHandler(fluidTank);
     private int tickPart;
     private int dmSize = -1;
 
@@ -107,7 +109,7 @@ public class TileEntityDMPump extends TileEntity implements ITickable
         }
         else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
         {
-            return (T) fluidTank;
+            return (T) handler;
         }
         return super.getCapability(capability, facing);
     }

@@ -1,6 +1,8 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.entity.EntityCube;
+import com.abecderic.mnu.item.ItemUpgradeTransfer;
+import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.network.PacketCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
@@ -20,7 +22,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -57,6 +61,37 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
+            /* handle upgrades */
+            for (int i = 0; i < UPGRADES_SIZE; i++)
+            {
+                ItemStack s = upgrades.getStackInSlot(i);
+                if (!s.isEmpty())
+                {
+                    if (s.getItem() == MNUItems.upgradeItemsTransfer)
+                    {
+                        if (((ItemUpgradeTransfer)MNUItems.upgradeItemsTransfer).isExtracting(s))
+                        {
+                            pullItems(((ItemUpgradeTransfer)MNUItems.upgradeItemsTransfer).getDirection(s));
+                        }
+                        else
+                        {
+                            pushItems(((ItemUpgradeTransfer)MNUItems.upgradeItemsTransfer).getDirection(s));
+                        }
+                    }
+                    else if (s.getItem() == MNUItems.upgradeFluidsTransfer)
+                    {
+                        if (((ItemUpgradeTransfer)MNUItems.upgradeFluidsTransfer).isExtracting(s))
+                        {
+                            pullFluids(((ItemUpgradeTransfer)MNUItems.upgradeFluidsTransfer).getDirection(s));
+                        }
+                        else
+                        {
+                            pushFluids(((ItemUpgradeTransfer)MNUItems.upgradeFluidsTransfer).getDirection(s));
+                        }
+                    }
+                }
+            }
+            /* get energy */
             for (EnumFacing facing : EnumFacing.VALUES)
             {
                 BlockPos pos = getPos().offset(facing);
@@ -74,6 +109,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     }
                 }
             }
+            /* send cube */
             if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
             {
                 sendCube();
@@ -129,6 +165,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         tanks.deserializeNBT(compound.getCompoundTag("tanks"));
         redstoneMode = compound.getByte("r_mode");
         energyOnly = compound.getBoolean("energy_only");
+        cubeHops = compound.getByte("cube_hops");
     }
 
     @Override
@@ -141,6 +178,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         compound.setTag("tanks", tanks.serializeNBT());
         compound.setByte("r_mode", (byte) redstoneMode);
         compound.setBoolean("energy_only", energyOnly);
+        compound.setByte("cube_hops", (byte) cubeHops);
         return compound;
     }
 
@@ -261,5 +299,101 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     public ItemStackHandler getUpgrades()
     {
         return upgrades;
+    }
+
+    private void pullItems(EnumFacing facing)
+    {
+        TileEntity te = world.getTileEntity(pos.offset(facing));
+        if (te != null)
+        {
+            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+            if (itemHandler != null)
+            {
+                for (int slot = 0; slot < itemHandler.getSlots(); slot++)
+                {
+                    ItemStack stack = itemHandler.getStackInSlot(slot);
+                    if (stack.isEmpty()) continue;
+                    System.out.println("pulling from slot " + slot + " from " + facing.getName());
+                    ItemStack returnStack = transferItems(stack, inventory, true);
+                    if (stack.getCount() == returnStack.getCount()) return;
+                    stack = itemHandler.extractItem(slot, stack.getCount() - returnStack.getCount(), false);
+                    transferItems(stack, inventory, false);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void pushItems(EnumFacing facing)
+    {
+        TileEntity te = world.getTileEntity(pos.offset(facing));
+        if (te != null)
+        {
+            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+            if (itemHandler != null)
+            {
+                for (int slot = 0; slot < BUFFER_SIZE; slot++)
+                {
+                    ItemStack stack = inventory.getStackInSlot(slot);
+                    if (stack.isEmpty()) return;
+                    ItemStack returnStack = transferItems(stack, itemHandler, true);
+                    if (stack.getCount() == returnStack.getCount()) return;
+                    stack = inventory.extractItem(slot, stack.getCount() - returnStack.getCount(), false);
+                    transferItems(stack, itemHandler, false);
+                }
+            }
+        }
+    }
+
+    private ItemStack transferItems(ItemStack stack, IItemHandler to, boolean simulate)
+    {
+        for (int i = 0; i < to.getSlots(); i++)
+        {
+            stack = to.insertItem(i, stack, simulate);
+            if (stack.isEmpty())
+            {
+                break;
+            }
+        }
+        return stack;
+    }
+
+    private void pullFluids(EnumFacing facing)
+    {
+        TileEntity te = world.getTileEntity(pos.offset(facing));
+        if (te != null)
+        {
+            IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
+            if (fluidHandler != null)
+            {
+                FluidStack stack = fluidHandler.drain(1000, false);
+                if (stack != null)
+                {
+                    int amount = tanks.fill(stack, false);
+                    if (amount > 0)
+                    {
+                        stack = fluidHandler.drain(amount, true);
+                        tanks.fill(stack, true);
+                    }
+                }
+            }
+        }
+    }
+
+    private void pushFluids(EnumFacing facing)
+    {
+        TileEntity te = world.getTileEntity(pos.offset(facing));
+        if (te != null)
+        {
+            IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
+            if (fluidHandler != null)
+            {
+                for (int i = 0; i < TANKS; i++)
+                {
+                    int amount = fluidHandler.fill(tanks.getTank(i).getFluid(), true);
+                    tanks.getTank(i).drain(amount, true);
+                }
+            }
+        }
     }
 }

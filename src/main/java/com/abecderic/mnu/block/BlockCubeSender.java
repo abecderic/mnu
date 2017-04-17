@@ -101,7 +101,7 @@ public class BlockCubeSender extends BlockContainer
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
