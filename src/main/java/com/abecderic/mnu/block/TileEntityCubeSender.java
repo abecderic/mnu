@@ -10,6 +10,7 @@ import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -49,6 +51,8 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private static final int ENERGY_MIN = 8192;
     private boolean energyOnly = false;
     private int redstoneMode = 0;
+    private BlockPos receiverPos;
+    private TileEntityCubeSender receiver;
 
     public TileEntityCubeSender()
     {
@@ -61,6 +65,26 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
+            if (receiver == null)
+            {
+                if (receiverPos == null)
+                {
+                    sendCube(true);
+                    return;
+                }
+                else
+                {
+                    TileEntity te = world.getTileEntity(receiverPos);
+                    if (te != null && te instanceof TileEntityCubeSender)
+                    {
+                        receiver = (TileEntityCubeSender) te;
+                    }
+                    else
+                    {
+                        receiverPos = null;
+                    }
+                }
+            }
             /* handle upgrades */
             for (int i = 0; i < UPGRADES_SIZE; i++)
             {
@@ -101,7 +125,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
                     if (energy != null && energy.getEnergyStored() < energy.getMaxEnergyStored())
                     {
-                        int extracted = energy.extractEnergy(Math.min(MAX_TRANSFER * 20, energy.getMaxEnergyStored() - energy.getEnergyStored()), false);
+                        int extracted = energy.extractEnergy(Math.min(MAX_TRANSFER * 20, energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored()), false);
                         if (extracted > 0)
                         {
                             energyStorage.addEnergy(extracted);
@@ -112,7 +136,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
             /* send cube */
             if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
             {
-                sendCube();
+                sendCube(false);
             }
             markDirty();
         }
@@ -166,6 +190,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         redstoneMode = compound.getByte("r_mode");
         energyOnly = compound.getBoolean("energy_only");
         cubeHops = compound.getByte("cube_hops");
+        if (compound.hasKey("rec_x") && compound.hasKey("rec_y") && compound.hasKey("rec_z"))
+        {
+           receiverPos = new BlockPos(compound.getInteger("rec_x"), compound.getInteger("rec_y"), compound.getInteger("rec_z"));
+        }
     }
 
     @Override
@@ -179,6 +207,12 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         compound.setByte("r_mode", (byte) redstoneMode);
         compound.setBoolean("energy_only", energyOnly);
         compound.setByte("cube_hops", (byte) cubeHops);
+        if (receiver != null)
+        {
+            compound.setInteger("rec_x", receiver.getPos().getX());
+            compound.setInteger("rec_y", receiver.getPos().getY());
+            compound.setInteger("rec_z", receiver.getPos().getZ());
+        }
         return compound;
     }
 
@@ -188,68 +222,84 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return false;
     }
 
-    protected boolean sendCube()
+    protected boolean sendCube(boolean fake)
     {
-        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1) + (energyOnly ? ENERGY_MIN : 0);
-        boolean hasEnergy = energyStorage.getEnergyStored() >= energyNeeded;
-        boolean hasFluid = false;
-        for (int i = 0; i < TANKS; i++)
+        int itemSlot = -1;
+        Fluid fluid = null;
+        boolean extraEnergy = false;
+        EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
+        BlockPos pos = this.pos.offset(facing);
+        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1);
+        if (!fake)
         {
-            if (tanks.getTank(i).getFluidAmount() >= FLUID_MIN)
+            /* pre-flight checks */
+            if (energyStorage.getEnergyStored() < energyNeeded) return false;
+            for (int i = 0; i < BUFFER_SIZE; i++)
             {
-                hasFluid = true;
-                break;
+                if (inventory.getStackInSlot(i).getCount() >= ITEM_MIN && receiver.canAccept(inventory.getStackInSlot(i).getItem(), ITEM_MIN))
+                {
+                    itemSlot = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < TANKS; i++)
+            {
+                if (tanks.getTank(i).getFluidAmount() >= FLUID_MIN && tanks.getTank(i).getFluid() != null && receiver.canAccept(tanks.getTank(i).getFluid().getFluid(), FLUID_MIN))
+                {
+                    fluid = tanks.getTank(i).getFluid().getFluid();
+                    break;
+                }
+            }
+            if (itemSlot < 0 && fluid == null && energyOnly && energyStorage.getEnergyStored() >= energyNeeded + ENERGY_MIN)
+            {
+                extraEnergy = true;
+            }
+            if (itemSlot < 0 && fluid == null && !extraEnergy) return false;
+            if (!world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos)) return false;
+        }
+        /* fill the cube */
+        EntityCube cube = new EntityCube(world, getPos());
+        cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
+        if (!fake)
+        {
+            energyStorage.removeEnergy(energyNeeded);
+            cube.setEnergy(energyNeeded - CUBE_ENERGY_PER_HOP);
+            if (itemSlot >= 0)
+            {
+                ItemStack stack = inventory.extractItem(itemSlot, ITEM_MIN, false);
+                cube.setItem(stack);
+            }
+            else if (fluid != null)
+            {
+                FluidStack stack = tanks.drain(new FluidStack(fluid, FLUID_MIN), true);
+                cube.setFluid(stack);
+            }
+            else if (extraEnergy)
+            {
+                energyStorage.removeEnergy(ENERGY_MIN);
+                cube.setEnergy(cube.getEnergy() + ENERGY_MIN);
             }
         }
-        boolean hasItem = false;
+        world.spawnEntity(cube);
+        return true;
+    }
+
+    private boolean canAccept(Item item, int amount)
+    {
+        ItemStack stack = new ItemStack(item, amount);
         for (int i = 0; i < BUFFER_SIZE; i++)
         {
-            if (inventory.getStackInSlot(i).getCount() >= ITEM_MIN)
-            {
-                hasItem = true;
-                break;
-            }
-        }
-        if (hasEnergy && (energyOnly || hasItem || hasFluid))
-        {
-            EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
-            BlockPos pos = this.pos.offset(facing);
-            if (world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos))
-            {
-                energyStorage.removeEnergy(energyNeeded);
-                EntityCube cube = new EntityCube(world);
-                cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-                cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
-                cube.setEnergy(energyNeeded - CUBE_ENERGY_PER_HOP);
-                if (hasItem)
-                {
-                    for (int i = 0; i < BUFFER_SIZE; i++)
-                    {
-                        if (inventory.getStackInSlot(i).getCount() >= ITEM_MIN)
-                        {
-                            ItemStack stack = inventory.extractItem(i, ITEM_MIN, false);
-                            cube.setItem(stack);
-                            break;
-                        }
-                    }
-                }
-                else if (hasFluid)
-                {
-                    for (int i = 0; i < TANKS; i++)
-                    {
-                        if (tanks.getTank(i).getFluidAmount() >= FLUID_MIN)
-                        {
-                            FluidStack fluid = tanks.getTank(i).drainInternal(FLUID_MIN, true);
-                            cube.setFluid(fluid);
-                            break;
-                        }
-                    }
-                }
-                world.spawnEntity(cube);
-                return true;
-            }
+            stack = inventory.insertItem(i, stack, true);
+            if (stack.isEmpty()) return true;
         }
         return false;
+    }
+
+    private boolean canAccept(Fluid fluid, int amount)
+    {
+        FluidStack stack = new FluidStack(fluid, amount);
+        return tanks.fill(stack, false) >= amount;
     }
 
     public boolean canInteractWith(EntityPlayer playerIn)
@@ -301,6 +351,18 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return upgrades;
     }
 
+    public void cubePingback(TileEntityCubeSender reciever)
+    {
+        this.receiver = reciever;
+        this.receiverPos = reciever.getPos();
+    }
+
+    public void invalidateReciever()
+    {
+        this.receiver = null;
+        this.receiverPos = null;
+    }
+
     private void pullItems(EnumFacing facing)
     {
         TileEntity te = world.getTileEntity(pos.offset(facing));
@@ -313,7 +375,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 {
                     ItemStack stack = itemHandler.getStackInSlot(slot);
                     if (stack.isEmpty()) continue;
-                    System.out.println("pulling from slot " + slot + " from " + facing.getName());
                     ItemStack returnStack = transferItems(stack, inventory, true);
                     if (stack.getCount() == returnStack.getCount()) return;
                     stack = itemHandler.extractItem(slot, stack.getCount() - returnStack.getCount(), false);

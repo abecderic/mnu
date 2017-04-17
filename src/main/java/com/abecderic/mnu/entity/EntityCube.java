@@ -8,11 +8,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -29,9 +31,17 @@ public class EntityCube extends EntityThrowable
     private static final DataParameter<ItemStack> ITEM = EntityDataManager.createKey(EntityCube.class, DataSerializers.OPTIONAL_ITEM_STACK);
     private static final DataParameter<FluidStack> FLUID = EntityDataManager.createKey(EntityCube.class, DataSerializerFluid.OPTIONAL_FLUID_STACK);
 
+    private BlockPos origin;
+
     public EntityCube(World worldIn)
     {
         super(worldIn);
+    }
+
+    public EntityCube(World worldIn, BlockPos origin)
+    {
+        super(worldIn);
+        this.origin = origin;
     }
 
     @Override
@@ -60,6 +70,7 @@ public class EntityCube extends EntityThrowable
             if (posY >= world.getHeight() || ticksExisted >= 200 || posY < 0)
             {
                 this.kill();
+                pingback(null);
             }
         }
     }
@@ -77,6 +88,7 @@ public class EntityCube extends EntityThrowable
                     receiveCube((TileEntityCubeSender) te);
                     this.world.setEntityState(this, (byte)3);
                     this.setDead();
+                    pingback((TileEntityCubeSender) te);
                 }
             }
             else
@@ -95,7 +107,7 @@ public class EntityCube extends EntityThrowable
     {
         if (!world.isRemote)
         {
-            StringBuilder sb = new StringBuilder();
+            /*StringBuilder sb = new StringBuilder();
             sb.append("Cube received: ").append(this).append(", Energy:").append(getEnergy());
             sb.append(", Item: ").append(getItem()).append(", Fluid: ");
             if (getFluid() == null)
@@ -106,7 +118,7 @@ public class EntityCube extends EntityThrowable
             {
                 sb.append(getFluid().amount).append("x").append(getFluid().getLocalizedName());
             }
-            System.out.println(sb.toString());
+            System.out.println(sb.toString());*/
 
             IEnergyStorage storage = receiver.getCapability(CapabilityEnergy.ENERGY, null);
             if (storage != null && storage instanceof EnergyStorageInternal)
@@ -172,6 +184,11 @@ public class EntityCube extends EntityThrowable
             }
         }
 
+        if (!world.isRemote)
+        {
+            pingback(null);
+        }
+
         // TODO remove
         /* debug */
         if (!world.isRemote)
@@ -189,6 +206,48 @@ public class EntityCube extends EntityThrowable
             }
             System.out.println(sb.toString());
         }
+    }
+
+    private void pingback(TileEntityCubeSender receiver)
+    {
+        if (origin != null)
+        {
+            TileEntity te = world.getTileEntity(origin);
+            if (te != null && te instanceof TileEntityCubeSender)
+            {
+                if (receiver != null)
+                {
+                    ((TileEntityCubeSender)te).cubePingback(receiver);
+                }
+                else
+                {
+                    ((TileEntityCubeSender)te).invalidateReciever();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey("orig_x") && compound.hasKey("orig_y") && compound.hasKey("orig_z"))
+        {
+            origin = new BlockPos(compound.getInteger("orig_x"), compound.getInteger("orig_y"), compound.getInteger("orig_z"));
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        compound = super.writeToNBT(compound);
+        if (origin != null)
+        {
+            compound.setInteger("orig_x", origin.getX());
+            compound.setInteger("orig_y", origin.getY());
+            compound.setInteger("orig_z", origin.getZ());
+        }
+        return compound;
     }
 
     public int getEnergy()

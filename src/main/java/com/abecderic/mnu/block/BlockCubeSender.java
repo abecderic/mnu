@@ -122,7 +122,7 @@ public class BlockCubeSender extends BlockContainer
                 TileEntityCubeSender te = (TileEntityCubeSender) worldIn.getTileEntity(pos);
                 if (te != null && te.getRedstoneMode() == 3)
                 {
-                    te.sendCube();
+                    te.sendCube(false);
                 }
             }
             else if (redstone && !worldIn.isBlockPowered(pos))
