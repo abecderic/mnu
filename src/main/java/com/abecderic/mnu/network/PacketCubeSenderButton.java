@@ -13,17 +13,19 @@ public class PacketCubeSenderButton implements IMessage
 {
     private int dimension;
     private BlockPos pos;
-    private int state;
+    private int redstoneState;
+    private boolean energyOnly;
 
     public PacketCubeSenderButton()
     {
     }
 
-    public PacketCubeSenderButton(int dimension, BlockPos pos, int state)
+    public PacketCubeSenderButton(int dimension, BlockPos pos, int redstoneState, boolean energyOnly)
     {
         this.dimension = dimension;
         this.pos = pos;
-        this.state = state;
+        this.redstoneState = redstoneState;
+        this.energyOnly = energyOnly;
     }
 
     @Override
@@ -31,7 +33,8 @@ public class PacketCubeSenderButton implements IMessage
     {
         dimension = buf.readInt();
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
-        state = buf.readInt();
+        redstoneState = buf.readInt();
+        energyOnly = buf.readBoolean();
     }
 
     @Override
@@ -41,7 +44,8 @@ public class PacketCubeSenderButton implements IMessage
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
-        buf.writeInt(state);
+        buf.writeInt(redstoneState);
+        buf.writeBoolean(energyOnly);
     }
 
     public static class Handler implements IMessageHandler<PacketCubeSenderButton, IMessage>
@@ -53,7 +57,8 @@ public class PacketCubeSenderButton implements IMessage
             if (te != null && te instanceof TileEntityCubeSender)
             {
                 TileEntityCubeSender cubeSender = (TileEntityCubeSender)te;
-                cubeSender.setRedstoneMode(message.state);
+                cubeSender.setRedstoneMode(message.redstoneState);
+                cubeSender.setEnergyOnly(message.energyOnly);
             }
             return null;
         }

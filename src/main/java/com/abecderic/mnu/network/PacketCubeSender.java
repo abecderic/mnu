@@ -25,17 +25,19 @@ public class PacketCubeSender implements IMessage
     private int energy;
     private NBTTagCompound tanks;
     private byte redstoneMode;
+    private boolean energyOnly;
 
     public PacketCubeSender()
     {
     }
 
-    public PacketCubeSender(BlockPos pos, int energy, MultipleFluidTanks tanks, int redstoneMode)
+    public PacketCubeSender(BlockPos pos, int energy, MultipleFluidTanks tanks, int redstoneMode, boolean energyOnly)
     {
         this.pos = pos;
         this.energy = energy;
         this.tanks = tanks.serializeNBT();
         this.redstoneMode = (byte) redstoneMode;
+        this.energyOnly = energyOnly;
     }
 
     @Override
@@ -53,6 +55,7 @@ public class PacketCubeSender implements IMessage
             e.printStackTrace();
         }
         redstoneMode = buf.readByte();
+        energyOnly = buf.readBoolean();
     }
 
     @Override
@@ -65,6 +68,7 @@ public class PacketCubeSender implements IMessage
         PacketBuffer packetBuffer = new PacketBuffer(buf);
         packetBuffer.writeCompoundTag(tanks);
         buf.writeByte(redstoneMode);
+        buf.writeBoolean(energyOnly);
     }
 
     public static class Handler implements IMessageHandler<PacketCubeSender, IMessage>
@@ -87,6 +91,7 @@ public class PacketCubeSender implements IMessage
                     ((MultipleFluidTanks)fluidHandler).deserializeNBT(message.tanks);
                 }
                 cubeSender.setRedstoneMode(message.redstoneMode);
+                cubeSender.setEnergyOnly(message.energyOnly);
             }
             return null;
         }

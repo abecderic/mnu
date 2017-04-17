@@ -37,8 +37,9 @@ public class GuiCubeSender extends GuiContainer
     private TileEntityCubeSender te;
 
     private GuiButtonItem redstone;
+    private GuiButtonIcon energyOnly;
 
-    private static final ResourceLocation background = new ResourceLocation(MNU.MODID, "textures/gui/cube_sender.png");
+    public static final ResourceLocation BACKGROUND = new ResourceLocation(MNU.MODID, "textures/gui/cube_sender.png");
 
     public GuiCubeSender(TileEntityCubeSender te, ContainerCubeSender container)
     {
@@ -58,12 +59,16 @@ public class GuiCubeSender extends GuiContainer
                 new GuiButtonItem.State(Item.getItemFromBlock(Blocks.REDSTONE_TORCH), "gui.cube_sender.redstone.with_redstone_on"),
                 new GuiButtonItem.State(Items.REPEATER, "gui.cube_sender.redstone.on_pulse"));
         addButton(redstone);
+        energyOnly = new GuiButtonIcon(1, guiLeft + 100, guiTop + 6, 20, 20, "gui.cube_sender.energyonly", 16, 16,
+                new GuiButtonIcon.State("gui.cube_sender.energyonly.disabled", 176, 70),
+                new GuiButtonIcon.State("gui.cube_sender.energyonly.enabled", 176, 86));
+        addButton(energyOnly);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        mc.getTextureManager().bindTexture(background);
+        mc.getTextureManager().bindTexture(BACKGROUND);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         /* energy bar */
@@ -102,7 +107,7 @@ public class GuiCubeSender extends GuiContainer
                 }
             }
         }
-        mc.renderEngine.bindTexture(background);
+        mc.renderEngine.bindTexture(BACKGROUND);
         for (int i = 0; i < TileEntityCubeSender.TANKS; i++)
         {
             int x = (i % 2) * 22 + 34;
@@ -112,6 +117,7 @@ public class GuiCubeSender extends GuiContainer
 
         /* buttons */
         redstone.setState(te.getRedstoneMode());
+        energyOnly.setState(te.isEnergyOnly() ? 1 : 0);
     }
 
     @Override
@@ -167,9 +173,9 @@ public class GuiCubeSender extends GuiContainer
         /* buttons */
         for (GuiButton button : buttonList)
         {
-            if (button.isMouseOver() && button instanceof GuiButtonItem)
+            if (button.isMouseOver() && button instanceof GuiButtonState)
             {
-                drawHoveringText(((GuiButtonItem)button).getTooltip(), mouseX, mouseY);
+                drawHoveringText(((GuiButtonState)button).getTooltip(), mouseX, mouseY);
             }
         }
     }
@@ -182,7 +188,12 @@ public class GuiCubeSender extends GuiContainer
         {
             redstone.cycle();
             te.setRedstoneMode(redstone.getState());
-            MNUNetwork.snw.sendToServer(new PacketCubeSenderButton(te.getWorld().provider.getDimension(), te.getPos(), redstone.getState()));
         }
+        else if (button.equals(energyOnly))
+        {
+            energyOnly.cycle();
+            te.setEnergyOnly(energyOnly.getState() == 1);
+        }
+        MNUNetwork.snw.sendToServer(new PacketCubeSenderButton(te.getWorld().provider.getDimension(), te.getPos(), redstone.getState(), energyOnly.getState() == 1));
     }
 }

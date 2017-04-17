@@ -38,9 +38,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
     private int cubeHops = 0;
-    private int fluidMin = 0;
-    private int itemMin = 0;
+    private int fluidMin = 1;
+    private int itemMin = 1;
     private int energyMin = 0;
+    private boolean energyOnly = false;
     private int redstoneMode = 0;
 
     public TileEntityCubeSender()
@@ -124,6 +125,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         inventory.deserializeNBT(compound.getCompoundTag("buffer"));
         tanks.deserializeNBT(compound.getCompoundTag("tanks"));
         redstoneMode = compound.getByte("r_mode");
+        energyOnly = compound.getBoolean("energy_only");
     }
 
     @Override
@@ -134,6 +136,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         compound.setTag("buffer", inventory.serializeNBT());
         compound.setTag("tanks", tanks.serializeNBT());
         compound.setByte("r_mode", (byte) redstoneMode);
+        compound.setBoolean("energy_only", energyOnly);
         return compound;
     }
 
@@ -165,7 +168,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 break;
             }
         }
-        if (hasEnergy /*&& hasFluid*/ /*&& hasItem*/)
+        if (hasEnergy && (energyOnly || hasItem || hasFluid))
         {
             EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
             BlockPos pos = this.pos.offset(facing);
@@ -216,7 +219,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote)
         {
-            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks, redstoneMode), (EntityPlayerMP) playerIn);
+            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks, redstoneMode, energyOnly), (EntityPlayerMP) playerIn);
         }
     }
 
@@ -229,5 +232,15 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         this.redstoneMode = redstoneMode;
         markDirty();
+    }
+
+    public boolean isEnergyOnly()
+    {
+        return energyOnly;
+    }
+
+    public void setEnergyOnly(boolean energyOnly)
+    {
+        this.energyOnly = energyOnly;
     }
 }
