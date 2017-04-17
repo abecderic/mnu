@@ -13,12 +13,18 @@ import java.util.List;
 public class MultipleFluidTanks implements IFluidHandler
 {
     private int amount;
+    private int capacity;
     private FluidTank[] tanks;
 
-    public MultipleFluidTanks(int amount)
+    public MultipleFluidTanks(int amount, int capacity)
     {
         this.amount = amount;
+        this.capacity = capacity;
         this.tanks = new FluidTank[amount];
+        for (int i = 0; i < amount; i++)
+        {
+            this.tanks[i] = new FluidTank(capacity);
+        }
     }
 
     @Override
@@ -40,7 +46,7 @@ public class MultipleFluidTanks implements IFluidHandler
     {
         for (int i = 0; i < amount; i++)
         {
-            if (tanks[i].getFluid().isFluidEqual(resource))
+            if (tanks[i].getFluid() != null && tanks[i].getFluid().isFluidEqual(resource))
             {
                 return tanks[i].fill(resource, doFill);
             }
@@ -106,5 +112,10 @@ public class MultipleFluidTanks implements IFluidHandler
             compound.setTag("tank_" + i, tank);
         }
         return compound;
+    }
+
+    public int getAmount()
+    {
+        return amount;
     }
 }

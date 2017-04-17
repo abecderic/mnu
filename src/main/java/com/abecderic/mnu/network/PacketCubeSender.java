@@ -2,29 +2,38 @@ package com.abecderic.mnu.network;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
+import com.abecderic.mnu.util.MultipleFluidTanks;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.io.IOException;
 
 public class PacketCubeSender implements IMessage
 {
     private BlockPos pos;
     private int energy;
+    private NBTTagCompound tanks;
 
     public PacketCubeSender()
     {
     }
 
-    public PacketCubeSender(BlockPos pos, int energy)
+    public PacketCubeSender(BlockPos pos, int energy, MultipleFluidTanks tanks)
     {
         this.pos = pos;
         this.energy = energy;
+        this.tanks = tanks.serializeNBT();
     }
 
     @Override
@@ -32,6 +41,15 @@ public class PacketCubeSender implements IMessage
     {
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         energy = buf.readInt();
+        PacketBuffer packetBuffer = new PacketBuffer(buf);
+        try
+        {
+            tanks = packetBuffer.readCompoundTag();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -41,11 +59,12 @@ public class PacketCubeSender implements IMessage
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
         buf.writeInt(energy);
+        PacketBuffer packetBuffer = new PacketBuffer(buf);
+        packetBuffer.writeCompoundTag(tanks);
     }
 
     public static class Handler implements IMessageHandler<PacketCubeSender, IMessage>
     {
-
         @Override
         public IMessage onMessage(PacketCubeSender message, MessageContext ctx)
         {
@@ -57,6 +76,11 @@ public class PacketCubeSender implements IMessage
                 if (energyStorage != null && energyStorage instanceof EnergyStorageInternal)
                 {
                     ((EnergyStorageInternal)energyStorage).setEnergy(message.energy);
+                }
+                IFluidHandler fluidHandler = cubeSender.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                if (fluidHandler != null && fluidHandler instanceof MultipleFluidTanks)
+                {
+                    ((MultipleFluidTanks)fluidHandler).deserializeNBT(message.tanks);
                 }
             }
             return null;

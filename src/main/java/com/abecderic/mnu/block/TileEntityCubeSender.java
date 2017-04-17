@@ -31,9 +31,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private static final int CUBE_HOPS = 3;
     public static final int BUFFER_SIZE = 9;
     public static final int TANKS = 4;
+    private static final int TANK_CAPACITY = 8000;
     private ItemStackHandler inventory = new ItemStackHandler(BUFFER_SIZE);
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
-    private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS);
+    private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
 
     public TileEntityCubeSender()
@@ -41,8 +42,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         super();
         tickPart = (int)(Math.random() * 20D);
     }
-
-    // TODO test tanks
 
     @Override
     public void update()
@@ -174,7 +173,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote)
         {
-            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored()), (EntityPlayerMP) playerIn);
+            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks), (EntityPlayerMP) playerIn);
         }
     }
 }
