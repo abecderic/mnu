@@ -1,7 +1,6 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
-import com.abecderic.mnu.item.ItemBlockCubeSender;
 import com.abecderic.mnu.item.ItemBlockTooltip;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -34,7 +33,7 @@ public class MNUBlocks
         registerTileEntity(dmPump, DM_PUMP, TileEntityDMPump.class);
 
         cubeSender = new BlockCubeSender();
-        registerBlockWithItemBlock(cubeSender, CUBE_SENDER, new ItemBlockCubeSender(cubeSender));
+        registerBlockWithItemBlock(cubeSender, CUBE_SENDER, new ItemBlockTooltip(cubeSender, "msg.cube_sender.catchphrase"));
         registerTileEntity(cubeSender, CUBE_SENDER, TileEntityCubeSender.class);
     }
 

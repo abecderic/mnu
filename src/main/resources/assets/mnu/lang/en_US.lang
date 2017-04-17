@@ -42,6 +42,7 @@ item.mnu:wrench.name=Wrench
 
 itemGroup.mnu=MNU
 
+msg.cube_sender.catchphrase="It took a day longer than expected"
 msg.dm_pump.energy=Energy: %s / %s
 msg.dm_pump.tank=%s: %s mB / %s mB
 msg.dm_pump.tank.empty=Tank Empty
