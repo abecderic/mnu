@@ -85,6 +85,12 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     }
                 }
             }
+            else if (receiver.isInvalid())
+            {
+                receiver = null;
+                receiverPos = null;
+                return;
+            }
             /* handle upgrades */
             for (int i = 0; i < UPGRADES_SIZE; i++)
             {
