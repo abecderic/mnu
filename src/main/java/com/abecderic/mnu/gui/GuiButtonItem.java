@@ -45,6 +45,16 @@ public class GuiButtonItem extends GuiButton
         return list;
     }
 
+    public int getState()
+    {
+        return currentState;
+    }
+
+    public void setState(int state)
+    {
+        this.currentState = state;
+    }
+
     public void cycle()
     {
         currentState++;

@@ -41,6 +41,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private int fluidMin = 0;
     private int itemMin = 0;
     private int energyMin = 0;
+    private int redstoneMode = 0;
 
     public TileEntityCubeSender()
     {
@@ -70,7 +71,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     }
                 }
             }
-            sendCube();
+            if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
+            {
+                sendCube();
+            }
             markDirty();
         }
     }
@@ -119,6 +123,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER, compound.getInteger("storage"));
         inventory.deserializeNBT(compound.getCompoundTag("buffer"));
         tanks.deserializeNBT(compound.getCompoundTag("tanks"));
+        redstoneMode = compound.getByte("r_mode");
     }
 
     @Override
@@ -128,6 +133,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         compound.setInteger("storage", energyStorage.getEnergyStored());
         compound.setTag("buffer", inventory.serializeNBT());
         compound.setTag("tanks", tanks.serializeNBT());
+        compound.setByte("r_mode", (byte) redstoneMode);
         return compound;
     }
 
@@ -137,7 +143,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return false;
     }
 
-    private boolean sendCube()
+    protected boolean sendCube()
     {
         int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1) + energyMin;
         boolean hasEnergy = energyStorage.getEnergyStored() >= energyNeeded;
@@ -210,7 +216,18 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote)
         {
-            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks), (EntityPlayerMP) playerIn);
+            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks, redstoneMode), (EntityPlayerMP) playerIn);
         }
+    }
+
+    public int getRedstoneMode()
+    {
+        return redstoneMode;
+    }
+
+    public void setRedstoneMode(int redstoneMode)
+    {
+        this.redstoneMode = redstoneMode;
+        markDirty();
     }
 }

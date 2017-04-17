@@ -17,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -95,12 +96,40 @@ public class BlockCubeSender extends BlockContainer
                 if (te instanceof TileEntityCubeSender)
                 {
                     playerIn.openGui(MNU.instance, GuiHandler.GUIs.CUBE_SENDER.ordinal(), worldIn, pos.getX(), pos.getY(), pos.getZ());
-                    ((TileEntityCubeSender) te).sendUpdatePacket(playerIn);
                 }
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side)
+    {
+        return true;
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess worldIn, BlockPos pos, BlockPos neighbor)
+    {
+        if (worldIn instanceof World)
+        {
+            World world = (World)worldIn;
+            boolean redstone = world.getBlockState(pos).getValue(REDSTONE);
+            if (!redstone && world.isBlockPowered(pos))
+            {
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(REDSTONE, true));
+                TileEntityCubeSender te = (TileEntityCubeSender) world.getTileEntity(pos);
+                if (te != null && te.getRedstoneMode() == 3)
+                {
+                    te.sendCube();
+                }
+            }
+            else if (redstone && !world.isBlockPowered(pos))
+            {
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(REDSTONE, false));
+            }
+        }
     }
 
     @Nullable

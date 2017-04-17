@@ -3,6 +3,8 @@ package com.abecderic.mnu.gui;
 import com.abecderic.mnu.MNU;
 import com.abecderic.mnu.block.TileEntityCubeSender;
 import com.abecderic.mnu.container.ContainerCubeSender;
+import com.abecderic.mnu.network.MNUNetwork;
+import com.abecderic.mnu.network.PacketCubeSenderButton;
 import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -107,6 +109,9 @@ public class GuiCubeSender extends GuiContainer
             int y = (i / 2) * 38 + 8;
             drawTexturedModalRect(guiLeft + x, guiTop + y, 192, 0, 16, 32);
         }
+
+        /* buttons */
+        redstone.setState(te.getRedstoneMode());
     }
 
     @Override
@@ -176,6 +181,8 @@ public class GuiCubeSender extends GuiContainer
         if (button.equals(redstone))
         {
             redstone.cycle();
+            te.setRedstoneMode(redstone.getState());
+            MNUNetwork.snw.sendToServer(new PacketCubeSenderButton(te.getWorld().provider.getDimension(), te.getPos(), redstone.getState()));
         }
     }
 }

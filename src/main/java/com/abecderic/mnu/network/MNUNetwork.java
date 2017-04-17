@@ -14,5 +14,6 @@ public class MNUNetwork
         snw = NetworkRegistry.INSTANCE.newSimpleChannel(MNU.MODID);
         int i = 0;
         snw.registerMessage(PacketCubeSender.Handler.class, PacketCubeSender.class, i++, Side.CLIENT);
+        snw.registerMessage(PacketCubeSenderButton.Handler.class, PacketCubeSenderButton.class, i++, Side.SERVER);
     }
 }
