@@ -229,6 +229,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         boolean extraEnergy = false;
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
         BlockPos pos = this.pos.offset(facing);
+        if (!world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos)) return false;
         int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1);
         if (!fake)
         {
@@ -255,7 +256,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 extraEnergy = true;
             }
             if (itemSlot < 0 && fluid == null && !extraEnergy) return false;
-            if (!world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos)) return false;
         }
         /* fill the cube */
         EntityCube cube = new EntityCube(world, getPos());
