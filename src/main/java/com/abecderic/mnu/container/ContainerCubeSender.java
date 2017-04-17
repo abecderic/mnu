@@ -24,6 +24,9 @@ public class ContainerCubeSender extends Container
 
     private int oldEnergy = -1;
     private NBTTagCompound oldTanks = new NBTTagCompound();
+    private int oldRedstone = -1;
+    private boolean oldEnergyOnly = false;
+    private int oldCubeHops = -1;
 
     public ContainerCubeSender(InventoryPlayer inv, TileEntityCubeSender te)
     {
@@ -107,6 +110,21 @@ public class ContainerCubeSender extends Container
                 oldTanks = newTanks;
                 shouldUpdate = true;
             }
+        }
+        if (te.getRedstoneMode() != oldRedstone)
+        {
+            oldRedstone = te.getRedstoneMode();
+            shouldUpdate = true;
+        }
+        if (te.isEnergyOnly() != oldEnergyOnly)
+        {
+            oldEnergyOnly = te.isEnergyOnly();
+            shouldUpdate = true;
+        }
+        if (te.getCubeHops() != oldCubeHops)
+        {
+            oldCubeHops = te.getCubeHops();
+            shouldUpdate = true;
         }
         if (shouldUpdate)
         {

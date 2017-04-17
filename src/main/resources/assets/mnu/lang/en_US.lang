@@ -4,6 +4,10 @@ fluid.fluid_darkmatter=Dark Matter
 fluid.fluid_mnu=MNU
 
 gui.click_to_change=- Click to Change -
+gui.cube_sender.cube_hops=Extra Hops
+gui.cube_sender.cube_hops.tip=Packs additional energy into a Cube
+gui.cube_sender.cube_hops.tip2=so that the next Cube Sender does
+gui.cube_sender.cube_hops.tip3=not need to be connected to energy.
 gui.cube_sender.energy=Energy
 gui.cube_sender.energy.value=%s / %s
 gui.cube_sender.energyonly=Send Cubes containing only energy

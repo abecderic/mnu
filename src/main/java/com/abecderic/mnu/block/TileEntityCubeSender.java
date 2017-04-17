@@ -38,9 +38,9 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
     private int cubeHops = 0;
-    private int fluidMin = 1;
-    private int itemMin = 1;
-    private int energyMin = 0;
+    private static final int FLUID_MIN = 1000;
+    private static final int ITEM_MIN = 8;
+    private static final int ENERGY_MIN = 8192;
     private boolean energyOnly = false;
     private int redstoneMode = 0;
 
@@ -148,12 +148,12 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
 
     protected boolean sendCube()
     {
-        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1) + energyMin;
+        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1) + (energyOnly ? ENERGY_MIN : 0);
         boolean hasEnergy = energyStorage.getEnergyStored() >= energyNeeded;
         boolean hasFluid = false;
         for (int i = 0; i < TANKS; i++)
         {
-            if (tanks.getTank(i).getFluidAmount() >= fluidMin)
+            if (tanks.getTank(i).getFluidAmount() >= FLUID_MIN)
             {
                 hasFluid = true;
                 break;
@@ -162,7 +162,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         boolean hasItem = false;
         for (int i = 0; i < BUFFER_SIZE; i++)
         {
-            if (inventory.getStackInSlot(i).getCount() >= itemMin)
+            if (inventory.getStackInSlot(i).getCount() >= ITEM_MIN)
             {
                 hasItem = true;
                 break;
@@ -183,9 +183,9 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 {
                     for (int i = 0; i < BUFFER_SIZE; i++)
                     {
-                        if (inventory.getStackInSlot(i).getCount() >= itemMin)
+                        if (inventory.getStackInSlot(i).getCount() >= ITEM_MIN)
                         {
-                            ItemStack stack = inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                            ItemStack stack = inventory.extractItem(i, ITEM_MIN, false);
                             cube.setItem(stack);
                             break;
                         }
@@ -195,9 +195,9 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 {
                     for (int i = 0; i < TANKS; i++)
                     {
-                        if (tanks.getTank(i).getFluidAmount() >= fluidMin)
+                        if (tanks.getTank(i).getFluidAmount() >= FLUID_MIN)
                         {
-                            FluidStack fluid = tanks.getTank(i).drainInternal(tanks.getTank(i).getFluidAmount(), true);
+                            FluidStack fluid = tanks.getTank(i).drainInternal(FLUID_MIN, true);
                             cube.setFluid(fluid);
                             break;
                         }
@@ -219,7 +219,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     {
         if (!world.isRemote)
         {
-            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks, redstoneMode, energyOnly), (EntityPlayerMP) playerIn);
+            MNUNetwork.snw.sendTo(new PacketCubeSender(pos, energyStorage.getEnergyStored(), tanks, redstoneMode, energyOnly, cubeHops), (EntityPlayerMP) playerIn);
         }
     }
 
@@ -242,5 +242,15 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     public void setEnergyOnly(boolean energyOnly)
     {
         this.energyOnly = energyOnly;
+    }
+
+    public int getCubeHops()
+    {
+        return cubeHops;
+    }
+
+    public void setCubeHops(int cubeHops)
+    {
+        this.cubeHops = cubeHops;
     }
 }

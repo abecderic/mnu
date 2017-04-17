@@ -38,6 +38,10 @@ public class GuiCubeSender extends GuiContainer
 
     private GuiButtonItem redstone;
     private GuiButtonIcon energyOnly;
+    private GuiButton hopsMinus;
+    private GuiButton hopsPlus;
+
+    private int cubeHops;
 
     public static final ResourceLocation BACKGROUND = new ResourceLocation(MNU.MODID, "textures/gui/cube_sender.png");
 
@@ -59,10 +63,15 @@ public class GuiCubeSender extends GuiContainer
                 new GuiButtonItem.State(Item.getItemFromBlock(Blocks.REDSTONE_TORCH), "gui.cube_sender.redstone.with_redstone_on"),
                 new GuiButtonItem.State(Items.REPEATER, "gui.cube_sender.redstone.on_pulse"));
         addButton(redstone);
-        energyOnly = new GuiButtonIcon(1, guiLeft + 100, guiTop + 6, 20, 20, "gui.cube_sender.energyonly", 16, 16,
+        energyOnly = new GuiButtonIcon(1, guiLeft + 102, guiTop + 6, 20, 20, "gui.cube_sender.energyonly", 16, 16,
                 new GuiButtonIcon.State("gui.cube_sender.energyonly.disabled", 176, 70),
                 new GuiButtonIcon.State("gui.cube_sender.energyonly.enabled", 176, 86));
         addButton(energyOnly);
+        hopsMinus = new GuiButton(2, guiLeft + 80, guiTop + 42, 20, 20, "-");
+        addButton(hopsMinus);
+        hopsPlus = new GuiButton(2, guiLeft + 124, guiTop + 42, 20, 20, "+");
+        addButton(hopsPlus);
+        cubeHops = te.getCubeHops();
     }
 
     @Override
@@ -118,6 +127,8 @@ public class GuiCubeSender extends GuiContainer
         /* buttons */
         redstone.setState(te.getRedstoneMode());
         energyOnly.setState(te.isEnergyOnly() ? 1 : 0);
+        fontRendererObj.drawString(new TextComponentTranslation("gui.cube_sender.cube_hops").getFormattedText(), guiLeft + 80, guiTop + 32, 0x444444, false);
+        fontRendererObj.drawString(cubeHops + "", (float)(guiLeft + 112 - fontRendererObj.getStringWidth(cubeHops + "") / 2), (float)guiTop + 48, 0x444444, false);
     }
 
     @Override
@@ -178,6 +189,21 @@ public class GuiCubeSender extends GuiContainer
                 drawHoveringText(((GuiButtonState)button).getTooltip(), mouseX, mouseY);
             }
         }
+
+        /* cube hops setting */
+        if (80 <= mouseX && mouseX < 144 && 28 <= mouseY && mouseY < 64)
+        {
+            IEnergyStorage storage = te.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null)
+            {
+                List<String> list = new ArrayList<>();
+                list.add(new TextComponentTranslation("gui.cube_sender.cube_hops").getFormattedText());
+                list.add(new TextComponentTranslation("gui.cube_sender.cube_hops.tip").getFormattedText());
+                list.add(new TextComponentTranslation("gui.cube_sender.cube_hops.tip2").getFormattedText());
+                list.add(new TextComponentTranslation("gui.cube_sender.cube_hops.tip3").getFormattedText());
+                drawHoveringText(list, mouseX, mouseY);
+            }
+        }
     }
 
     @Override
@@ -194,6 +220,24 @@ public class GuiCubeSender extends GuiContainer
             energyOnly.cycle();
             te.setEnergyOnly(energyOnly.getState() == 1);
         }
-        MNUNetwork.snw.sendToServer(new PacketCubeSenderButton(te.getWorld().provider.getDimension(), te.getPos(), redstone.getState(), energyOnly.getState() == 1));
+        else if (button.equals(hopsMinus))
+        {
+            cubeHops--;
+            if (cubeHops < 0)
+            {
+                cubeHops = 0;
+            }
+            te.setCubeHops(cubeHops);
+        }
+        else if (button.equals(hopsPlus))
+        {
+            cubeHops++;
+            if (cubeHops > 32)
+            {
+                cubeHops = 32;
+            }
+            te.setCubeHops(cubeHops);
+        }
+        MNUNetwork.snw.sendToServer(new PacketCubeSenderButton(te.getWorld().provider.getDimension(), te.getPos(), redstone.getState(), energyOnly.getState() == 1, cubeHops));
     }
 }
