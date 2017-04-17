@@ -5,9 +5,13 @@ import com.abecderic.mnu.block.TileEntityCubeSender;
 import com.abecderic.mnu.container.ContainerCubeSender;
 import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -16,6 +20,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +34,8 @@ public class GuiCubeSender extends GuiContainer
 
     private TileEntityCubeSender te;
 
+    private GuiButtonItem redstone;
+
     private static final ResourceLocation background = new ResourceLocation(MNU.MODID, "textures/gui/cube_sender.png");
 
     public GuiCubeSender(TileEntityCubeSender te, ContainerCubeSender container)
@@ -37,6 +44,18 @@ public class GuiCubeSender extends GuiContainer
         this.te = te;
         xSize = WIDTH;
         ySize = HEIGHT;
+    }
+
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+        redstone = new GuiButtonItem(0, guiLeft + 124, guiTop + 6, 20, 20, "gui.cube_sender.redstone",
+                new GuiButtonItem.State(Items.GUNPOWDER, "gui.cube_sender.redstone.always_on"),
+                new GuiButtonItem.State(Items.REDSTONE, "gui.cube_sender.redstone.with_redstone_off"),
+                new GuiButtonItem.State(Item.getItemFromBlock(Blocks.REDSTONE_TORCH), "gui.cube_sender.redstone.with_redstone_on"),
+                new GuiButtonItem.State(Items.REPEATER, "gui.cube_sender.redstone.on_pulse"));
+        addButton(redstone);
     }
 
     @Override
@@ -138,6 +157,25 @@ public class GuiCubeSender extends GuiContainer
                     }
                 }
             }
+        }
+
+        /* buttons */
+        for (GuiButton button : buttonList)
+        {
+            if (button.isMouseOver() && button instanceof GuiButtonItem)
+            {
+                drawHoveringText(((GuiButtonItem)button).getTooltip(), mouseX, mouseY);
+            }
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException
+    {
+        super.actionPerformed(button);
+        if (button.equals(redstone))
+        {
+            redstone.cycle();
         }
     }
 }

@@ -3,9 +3,15 @@ entity.cube.name=Cube
 fluid.fluid_darkmatter=Dark Matter
 fluid.fluid_mnu=MNU
 
+gui.click_to_change=- Click to Change -
 gui.cube_sender.energy=Energy
 gui.cube_sender.energy.value=%s / %s
 gui.cube_sender.fluid=%s
+gui.cube_sender.redstone=Redstone Mode
+gui.cube_sender.redstone.always_on=Always active
+gui.cube_sender.redstone.on_pulse=Active on redstone pulse
+gui.cube_sender.redstone.with_redstone_off=Active without signal
+gui.cube_sender.redstone.with_redstone_on=Active with signal
 gui.cube_sender.tank.empty=Tank Empty
 gui.cube_sender.tank.value=%s mB / %s mB
 
