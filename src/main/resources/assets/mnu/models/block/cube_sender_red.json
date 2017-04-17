@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/cube_sender_side_red",
+		"east": "mnu:blocks/cube_sender_side_red",
+		"south": "mnu:blocks/cube_sender_side_red",
+		"west": "mnu:blocks/cube_sender_side_red",
+		"up": "mnu:blocks/cube_sender_back_red",
+		"down": "mnu:blocks/cube_sender_front",
+		"all": "mnu:blocks/cube_sender_back_red"
+	}
+}

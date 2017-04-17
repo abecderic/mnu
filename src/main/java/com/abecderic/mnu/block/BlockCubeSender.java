@@ -2,6 +2,7 @@ package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
 import com.abecderic.mnu.gui.GuiHandler;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -110,24 +111,23 @@ public class BlockCubeSender extends BlockContainer
     }
 
     @Override
-    public void onNeighborChange(IBlockAccess worldIn, BlockPos pos, BlockPos neighbor)
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
-        if (worldIn instanceof World)
+        if (worldIn != null)
         {
-            World world = (World)worldIn;
-            boolean redstone = world.getBlockState(pos).getValue(REDSTONE);
-            if (!redstone && world.isBlockPowered(pos))
+            boolean redstone = worldIn.getBlockState(pos).getValue(REDSTONE);
+            if (!redstone && worldIn.getStrongPower(pos) > 0)
             {
-                world.setBlockState(pos, world.getBlockState(pos).withProperty(REDSTONE, true));
-                TileEntityCubeSender te = (TileEntityCubeSender) world.getTileEntity(pos);
+                worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(REDSTONE, true));
+                TileEntityCubeSender te = (TileEntityCubeSender) worldIn.getTileEntity(pos);
                 if (te != null && te.getRedstoneMode() == 3)
                 {
                     te.sendCube();
                 }
             }
-            else if (redstone && !world.isBlockPowered(pos))
+            else if (redstone && !worldIn.isBlockPowered(pos))
             {
-                world.setBlockState(pos, world.getBlockState(pos).withProperty(REDSTONE, false));
+                worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(REDSTONE, false));
             }
         }
     }
