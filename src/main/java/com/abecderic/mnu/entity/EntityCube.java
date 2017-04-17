@@ -5,6 +5,7 @@ import com.abecderic.mnu.util.DataSerializerFluid;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -93,11 +95,20 @@ public class EntityCube extends EntityThrowable
             }
             else
             {
+                if (!world.isRemote)
+                {
+                    pingback(null);
+                }
                 splat();
             }
         }
         else
         {
+            if (!world.isRemote && result.typeOfHit == RayTraceResult.Type.ENTITY)
+            {
+                int dmg = (getEnergy() + (getItem() != ItemStack.EMPTY ? 8192 : 0) + (getFluid() != null ? 8192 : 0)) / 2000;
+                result.entityHit.attackEntityFrom(DamageSource.causeExplosionDamage((EntityLivingBase)null), dmg);
+            }
             splat();
         }
         this.kill();
@@ -169,11 +180,6 @@ public class EntityCube extends EntityThrowable
                     world.spawnParticle(type, this.posX + rand.nextDouble() - 0.5, this.posY, this.posZ + rand.nextDouble() - 0.5, 0, 0, 0, particleId);
                 }
             }
-        }
-
-        if (!world.isRemote)
-        {
-            pingback(null);
         }
     }
 
