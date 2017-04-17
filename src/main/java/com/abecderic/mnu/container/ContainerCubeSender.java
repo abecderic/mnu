@@ -37,7 +37,7 @@ public class ContainerCubeSender extends Container
         {
             int x = row * 18 + 8;
             int y = 184;
-            this.addSlotToContainer(new Slot(inv, row, x, y));
+            addSlotToContainer(new Slot(inv, row, x, y));
         }
 
         /* player inventory */
@@ -47,18 +47,28 @@ public class ContainerCubeSender extends Container
             {
                 int x = col * 18 + 8;
                 int y = row * 18 + 126;
-                this.addSlotToContainer(new Slot(inv, col + row * 9 + 9, x, y));
+                addSlotToContainer(new Slot(inv, col + row * 9 + 9, x, y));
             }
         }
 
 		/* buffer */
         IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         int slotIndex = 0;
-        for (int row = 0; row < itemHandler.getSlots(); row++)
+        for (int col = 0; col < itemHandler.getSlots(); col++)
         {
-            int x = row * 18 + 8;
+            int x = col * 18 + 8;
             int y = 94;
             addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex, x, y));
+            slotIndex++;
+        }
+
+        /* upgrades */
+        slotIndex = 0;
+        for (int row = 0; row < this.te.getUpgrades().getSlots(); row++)
+        {
+            int x = 152;
+            int y = row * 18 + 8;
+            addSlotToContainer(new SlotItemHandler(this.te.getUpgrades(), slotIndex, x, y));
             slotIndex++;
         }
     }

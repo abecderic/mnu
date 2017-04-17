@@ -33,7 +33,9 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     public static final int BUFFER_SIZE = 9;
     public static final int TANKS = 4;
     private static final int TANK_CAPACITY = 8000;
+    private static final int UPGRADES_SIZE = 4;
     private ItemStackHandler inventory = new ItemStackHandler(BUFFER_SIZE);
+    private ItemStackHandler upgrades = new ItemStackHandler(UPGRADES_SIZE);
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
@@ -123,6 +125,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         super.readFromNBT(compound);
         energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER, compound.getInteger("storage"));
         inventory.deserializeNBT(compound.getCompoundTag("buffer"));
+        upgrades.deserializeNBT(compound.getCompoundTag("upgrades"));
         tanks.deserializeNBT(compound.getCompoundTag("tanks"));
         redstoneMode = compound.getByte("r_mode");
         energyOnly = compound.getBoolean("energy_only");
@@ -134,6 +137,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         compound = super.writeToNBT(compound);
         compound.setInteger("storage", energyStorage.getEnergyStored());
         compound.setTag("buffer", inventory.serializeNBT());
+        compound.setTag("upgrades", upgrades.serializeNBT());
         compound.setTag("tanks", tanks.serializeNBT());
         compound.setByte("r_mode", (byte) redstoneMode);
         compound.setBoolean("energy_only", energyOnly);
@@ -252,5 +256,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     public void setCubeHops(int cubeHops)
     {
         this.cubeHops = cubeHops;
+    }
+
+    public ItemStackHandler getUpgrades()
+    {
+        return upgrades;
     }
 }
