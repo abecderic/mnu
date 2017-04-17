@@ -2,6 +2,7 @@ package com.abecderic.mnu.entity;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
 import com.abecderic.mnu.util.DataSerializerFluid;
+import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -11,13 +12,16 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 public class EntityCube extends EntityThrowable
 {
@@ -89,10 +93,44 @@ public class EntityCube extends EntityThrowable
 
     private void receiveCube(TileEntityCubeSender receiver)
     {
-        IEnergyStorage storage = receiver.getCapability(CapabilityEnergy.ENERGY, EnumFacing.getFacingFromVector((float)motionX, (float)motionY, (float)motionZ).getOpposite());
-        if (storage != null)
+        if (!world.isRemote)
         {
-            storage.receiveEnergy(getEnergy(), false);
+            StringBuilder sb = new StringBuilder();
+            sb.append("Cube received: ").append(this).append(", Energy:").append(getEnergy());
+            sb.append(", Item: ").append(getItem()).append(", Fluid: ");
+            if (getFluid() == null)
+            {
+                sb.append("null");
+            }
+            else
+            {
+                sb.append(getFluid().amount).append("x").append(getFluid().getLocalizedName());
+            }
+            System.out.println(sb.toString());
+
+            IEnergyStorage storage = receiver.getCapability(CapabilityEnergy.ENERGY, null);
+            if (storage != null && storage instanceof EnergyStorageInternal)
+            {
+                ((EnergyStorageInternal)storage).addEnergy(getEnergy());
+            }
+            IFluidHandler fluidHandler = receiver.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+            if (fluidHandler != null)
+            {
+                fluidHandler.fill(getFluid(), true);
+            }
+            IItemHandler itemHandler = receiver.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            ItemStack stack = getItem();
+            if (itemHandler != null)
+            {
+                for (int i = 0; i < itemHandler.getSlots(); i++)
+                {
+                    stack = itemHandler.insertItem(i, stack, false);
+                    if (stack.isEmpty())
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 

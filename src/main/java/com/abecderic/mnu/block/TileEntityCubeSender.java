@@ -8,6 +8,7 @@ import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -35,7 +37,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
-    private int cubeHops = 3;
+    private int cubeHops = 0;
+    private int fluidMin = 0;
+    private int itemMin = 0;
+    private int energyMin = 0;
 
     public TileEntityCubeSender()
     {
@@ -134,19 +139,61 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
 
     private boolean sendCube()
     {
-        if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP * (cubeHops + 1))
+        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1) + energyMin;
+        boolean hasEnergy = energyStorage.getEnergyStored() >= energyNeeded;
+        boolean hasFluid = false;
+        for (int i = 0; i < TANKS; i++)
+        {
+            if (tanks.getTank(i).getFluidAmount() >= fluidMin)
+            {
+                hasFluid = true;
+                break;
+            }
+        }
+        boolean hasItem = false;
+        for (int i = 0; i < BUFFER_SIZE; i++)
+        {
+            if (inventory.getStackInSlot(i).getCount() >= itemMin)
+            {
+                hasItem = true;
+                break;
+            }
+        }
+        if (hasEnergy /*&& hasFluid*/ /*&& hasItem*/)
         {
             EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
             BlockPos pos = this.pos.offset(facing);
             if (world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos))
             {
-                energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP * (cubeHops + 1));
+                energyStorage.removeEnergy(energyNeeded);
                 EntityCube cube = new EntityCube(world);
                 cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
-                cube.setEnergy(CUBE_ENERGY_PER_HOP * cubeHops);
-                //cube.setFluid(new FluidStack(MNUFluids.fluidMNU, 1000));
-                //cube.setItem(new ItemStack(Items.GOLD_INGOT, 42));
+                cube.setEnergy(energyNeeded - CUBE_ENERGY_PER_HOP);
+                if (hasItem)
+                {
+                    for (int i = 0; i < BUFFER_SIZE; i++)
+                    {
+                        if (inventory.getStackInSlot(i).getCount() >= itemMin)
+                        {
+                            ItemStack stack = inventory.extractItem(i, inventory.getStackInSlot(i).getCount(), false);
+                            cube.setItem(stack);
+                            break;
+                        }
+                    }
+                }
+                else if (hasFluid)
+                {
+                    for (int i = 0; i < TANKS; i++)
+                    {
+                        if (tanks.getTank(i).getFluidAmount() >= fluidMin)
+                        {
+                            FluidStack fluid = tanks.getTank(i).drainInternal(tanks.getTank(i).getFluidAmount(), true);
+                            cube.setFluid(fluid);
+                            break;
+                        }
+                    }
+                }
                 world.spawnEntity(cube);
                 return true;
             }

@@ -28,9 +28,11 @@ public class EnergyStorageInternal extends EnergyStorage
         super(capacity, maxReceive, maxExtract, energy);
     }
 
-    public void addEnergy(int energy)
+    public int addEnergy(int energy)
     {
-        super.energy = Math.min(super.energy + energy, super.capacity);
+        int toInsert = Math.min(energy, super.capacity - super.energy);
+        super.energy += toInsert;
+        return energy - toInsert;
     }
 
     public void removeEnergy(int energy)
