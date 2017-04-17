@@ -107,19 +107,6 @@ public class EntityCube extends EntityThrowable
     {
         if (!world.isRemote)
         {
-            /*StringBuilder sb = new StringBuilder();
-            sb.append("Cube received: ").append(this).append(", Energy:").append(getEnergy());
-            sb.append(", Item: ").append(getItem()).append(", Fluid: ");
-            if (getFluid() == null)
-            {
-                sb.append("null");
-            }
-            else
-            {
-                sb.append(getFluid().amount).append("x").append(getFluid().getLocalizedName());
-            }
-            System.out.println(sb.toString());*/
-
             IEnergyStorage storage = receiver.getCapability(CapabilityEnergy.ENERGY, null);
             if (storage != null && storage instanceof EnergyStorageInternal)
             {
@@ -187,24 +174,6 @@ public class EntityCube extends EntityThrowable
         if (!world.isRemote)
         {
             pingback(null);
-        }
-
-        // TODO remove
-        /* debug */
-        if (!world.isRemote)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Cube splat: ").append(this).append(", Energy:").append(getEnergy());
-            sb.append(", Item: ").append(getItem()).append(", Fluid: ");
-            if (getFluid() == null)
-            {
-                sb.append("null");
-            }
-            else
-            {
-                sb.append(getFluid().amount).append("x").append(getFluid().getLocalizedName());
-            }
-            System.out.println(sb.toString());
         }
     }
 

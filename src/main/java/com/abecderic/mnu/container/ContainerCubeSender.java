@@ -138,7 +138,6 @@ public class ContainerCubeSender extends Container
         }
         if (shouldUpdate)
         {
-            System.out.println("sending cube sender update packet to " + listeners.size() + " players");
             for (IContainerListener player : listeners)
             {
                 if (player instanceof EntityPlayerMP)
