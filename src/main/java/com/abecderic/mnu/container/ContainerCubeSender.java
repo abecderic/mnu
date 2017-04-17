@@ -1,6 +1,7 @@
 package com.abecderic.mnu.container;
 
 import com.abecderic.mnu.block.TileEntityCubeSender;
+import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -8,8 +9,11 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -19,6 +23,7 @@ public class ContainerCubeSender extends Container
     private TileEntityCubeSender te;
 
     private int oldEnergy = -1;
+    private NBTTagCompound oldTanks = new NBTTagCompound();
 
     public ContainerCubeSender(InventoryPlayer inv, TileEntityCubeSender te)
     {
@@ -86,10 +91,26 @@ public class ContainerCubeSender extends Container
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
+        if (te.getWorld().getTotalWorldTime() % 10 > 0) return;
+        boolean shouldUpdate = false;
         IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, null);
         if (energy != null && energy.getEnergyStored() != oldEnergy)
         {
             oldEnergy = energy.getEnergyStored();
+            shouldUpdate = true;
+        }
+        IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        if (fluidHandler != null && fluidHandler instanceof MultipleFluidTanks)
+        {
+            NBTTagCompound newTanks = ((MultipleFluidTanks)fluidHandler).serializeNBT();
+            if (!newTanks.equals(oldTanks))
+            {
+                oldTanks = newTanks;
+                shouldUpdate = true;
+            }
+        }
+        if (shouldUpdate)
+        {
             for (IContainerListener player : listeners)
             {
                 if (player instanceof EntityPlayerMP)
@@ -98,7 +119,6 @@ public class ContainerCubeSender extends Container
                 }
             }
         }
-        // TODO detect changes in tanks
     }
 
     @Override

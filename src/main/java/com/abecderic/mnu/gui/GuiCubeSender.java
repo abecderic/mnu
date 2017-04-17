@@ -54,6 +54,7 @@ public class GuiCubeSender extends GuiContainer
         }
 
         /* tanks */
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         for (int i = 0; i < TileEntityCubeSender.TANKS; i++)
         {
             int x = (i % 2) * 22 + 34;
@@ -78,8 +79,14 @@ public class GuiCubeSender extends GuiContainer
                         drawTexturedModalRect(guiLeft + x, guiTop + y + 32 - fluidHeight, sprite, 16, fluidHeight);
                     }
                 }
-                drawTexturedModalRect(guiLeft + x, guiTop + y, 192, 0, 16, 32);
             }
+        }
+        mc.renderEngine.bindTexture(background);
+        for (int i = 0; i < TileEntityCubeSender.TANKS; i++)
+        {
+            int x = (i % 2) * 22 + 34;
+            int y = (i / 2) * 38 + 8;
+            drawTexturedModalRect(guiLeft + x, guiTop + y, 192, 0, 16, 32);
         }
     }
 
