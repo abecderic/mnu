@@ -5,15 +5,15 @@ import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.network.PacketCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.MultipleFluidTanks;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -28,7 +28,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private static final int STORAGE = 512000;
     private static final int MAX_TRANSFER = 128;
     private static final int CUBE_ENERGY_PER_HOP = 2048;
-    private static final int CUBE_HOPS = 3;
     public static final int BUFFER_SIZE = 9;
     public static final int TANKS = 4;
     private static final int TANK_CAPACITY = 8000;
@@ -36,6 +35,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
+    private int cubeHops = 3;
 
     public TileEntityCubeSender()
     {
@@ -65,9 +65,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     }
                 }
             }
-
-            // TODO uncomment
-            //sendCube();
+            sendCube();
             markDirty();
         }
     }
@@ -128,35 +126,27 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return compound;
     }
 
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return false;
+    }
+
     private boolean sendCube()
     {
-        // TODO enable cubes using energy again
-        //if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP)
+        if (energyStorage.getEnergyStored() >= CUBE_ENERGY_PER_HOP * (cubeHops + 1))
         {
-            int energy = 0;
-            for (int i = 0; i < CUBE_HOPS; i++)
-            {
-                if (energyStorage.getEnergyStored() >= i * CUBE_ENERGY_PER_HOP)
-                {
-                    energy = i * CUBE_ENERGY_PER_HOP;
-                }
-                else
-                {
-                    break;
-                }
-            }
             EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
             BlockPos pos = this.pos.offset(facing);
             if (world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos))
             {
-                energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP);
-                energyStorage.removeEnergy(energy);
+                energyStorage.removeEnergy(CUBE_ENERGY_PER_HOP * (cubeHops + 1));
                 EntityCube cube = new EntityCube(world);
                 cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
-                cube.setEnergy(energy);
+                cube.setEnergy(CUBE_ENERGY_PER_HOP * cubeHops);
                 //cube.setFluid(new FluidStack(MNUFluids.fluidMNU, 1000));
-                cube.setItem(new ItemStack(Items.GOLD_INGOT, 42));
+                //cube.setItem(new ItemStack(Items.GOLD_INGOT, 42));
                 world.spawnEntity(cube);
                 return true;
             }

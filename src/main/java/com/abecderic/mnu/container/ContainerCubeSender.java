@@ -91,7 +91,6 @@ public class ContainerCubeSender extends Container
     public void detectAndSendChanges()
     {
         super.detectAndSendChanges();
-        if (te.getWorld().getTotalWorldTime() % 10 > 0) return;
         boolean shouldUpdate = false;
         IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, null);
         if (energy != null && energy.getEnergyStored() != oldEnergy)
@@ -111,6 +110,7 @@ public class ContainerCubeSender extends Container
         }
         if (shouldUpdate)
         {
+            System.out.println("sending cube sender update packet to " + listeners.size() + " players");
             for (IContainerListener player : listeners)
             {
                 if (player instanceof EntityPlayerMP)

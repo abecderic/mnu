@@ -2,14 +2,17 @@ package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.ItemFuelHandler;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -90,6 +93,12 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
         compound.setInteger("storage", energyStorage.getEnergyStored());
         compound.setTag("inventory", itemStack.serializeNBT());
         return compound;
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return false;
     }
 
     public ITextComponent getEnergyString()

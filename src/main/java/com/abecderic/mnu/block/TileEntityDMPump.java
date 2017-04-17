@@ -4,6 +4,7 @@ import com.abecderic.mnu.fluid.MNUFluids;
 import com.abecderic.mnu.util.DarkMatterDeposits;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.MicrobucketsFluidTank;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,6 +13,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -110,6 +112,29 @@ public class TileEntityDMPump extends TileEntity implements ITickable
         return super.getCapability(capability, facing);
     }
 
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0, compound.getInteger("storage"));
+        fluidTank.deserializeNBT(compound.getCompoundTag("tank"));
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        compound = super.writeToNBT(compound);
+        compound.setInteger("storage", energyStorage.getEnergyStored());
+        compound.setTag("tank", fluidTank.serializeNBT());
+        return compound;
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+    {
+        return false;
+    }
+
     public ITextComponent getEnergyString()
     {
         return new TextComponentTranslation("msg.dm_pump.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
@@ -126,22 +151,5 @@ public class TileEntityDMPump extends TileEntity implements ITickable
             }
         }
         return new TextComponentTranslation("msg.dm_pump.tank.empty");
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0, compound.getInteger("storage"));
-        fluidTank.deserializeNBT(compound.getCompoundTag("tank"));
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
-    {
-        compound = super.writeToNBT(compound);
-        compound.setInteger("storage", energyStorage.getEnergyStored());
-        compound.setTag("tank", fluidTank.serializeNBT());
-        return compound;
     }
 }
