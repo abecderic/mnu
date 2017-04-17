@@ -16,6 +16,12 @@ public class MNUItems
     public static final String WRENCH = "wrench";
     public static Item wrench;
 
+    public static final String UPGRADE_ITEMS_TRANSFER = "upgrade_items_transfer";
+    public static Item upgradeItemsTransfer;
+
+    public static final String UPGRADE_FLUIDS_TRANSFER = "upgrade_fluids_transfer";
+    public static Item upgradeFluidsTransfer;
+
     public static void registerItems()
     {
         dmScanner = new ItemDMScanner();
@@ -24,6 +30,12 @@ public class MNUItems
         wrench = new ItemWrench();
         registerItem(wrench, WRENCH);
         OreDictionary.registerOre("itemWrench", wrench);
+
+        upgradeItemsTransfer = new ItemUpgradeTransfer(ItemUpgradeTransfer.Type.ITEMS);
+        registerItem(upgradeItemsTransfer, UPGRADE_ITEMS_TRANSFER);
+
+        upgradeFluidsTransfer = new ItemUpgradeTransfer(ItemUpgradeTransfer.Type.FLUIDS);
+        registerItem(upgradeFluidsTransfer, UPGRADE_FLUIDS_TRANSFER);
     }
 
     private static void registerItem(Item item, String name)
@@ -36,6 +48,8 @@ public class MNUItems
     {
         registerModelWithMeta(dmScanner, DM_SCANNER, 7);
         registerModel(wrench, WRENCH);
+        registerModelWithSameMeta(upgradeItemsTransfer, UPGRADE_ITEMS_TRANSFER, 16);
+        registerModelWithSameMeta(upgradeFluidsTransfer, UPGRADE_FLUIDS_TRANSFER, 16);
     }
 
     private static void registerModel(Item item, String name)
@@ -44,6 +58,17 @@ public class MNUItems
                 new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
         ModelLoader.setCustomModelResourceLocation(item, 0,
                 new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
+    }
+
+    private static void registerModelWithSameMeta(Item item, String name, int amount)
+    {
+        for (int i = 0; i < amount; i++)
+        {
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, i,
+                    new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(item, i,
+                    new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
+        }
     }
 
     private static void registerModelWithMeta(Item item, String name, int amount)
