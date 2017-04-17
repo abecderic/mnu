@@ -89,6 +89,11 @@ public class BlockCubeSender extends BlockContainer
                     facing = facing.getOpposite();
                 }
                 worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(FACING, facing));
+                TileEntity te = worldIn.getTileEntity(pos);
+                if (te instanceof TileEntityCubeSender)
+                {
+                    ((TileEntityCubeSender) te).invalidateReciever();
+                }
                 return true;
             }
             else if (hand == EnumHand.MAIN_HAND)
