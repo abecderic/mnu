@@ -82,7 +82,7 @@ public class BlockCubeSender extends BlockContainer
                 item = playerIn.getHeldItem(EnumHand.MAIN_HAND);
             }
             NonNullList<ItemStack> itemWrench = OreDictionary.getOres("itemWrench");
-            if (OreDictionary.containsMatch(false, itemWrench, item))
+            if (item.getItem().getHarvestLevel(item, "wrench", null, null) > 0 || OreDictionary.containsMatch(false, itemWrench, item))
             {
                 if (playerIn.isSneaking())
                 {

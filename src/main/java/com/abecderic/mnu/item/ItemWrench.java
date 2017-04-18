@@ -11,7 +11,7 @@ public class ItemWrench extends Item
         setCreativeTab(MNU.TAB);
         setMaxStackSize(1);
         setUnlocalizedName(MNUItems.WRENCH);
-        setHasSubtypes(true);
+        setHarvestLevel("wrench", 1);
     }
 
     @Override
