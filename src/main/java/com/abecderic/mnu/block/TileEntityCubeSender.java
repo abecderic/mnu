@@ -58,6 +58,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
     private BlockPos receiverPos;
     private TileEntityCubeSender receiver;
     private boolean isUpgraded = false;
+    private int tickDistance = 20;
 
     public TileEntityCubeSender()
     {
@@ -68,7 +69,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
     @Override
     public void update()
     {
-        if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
+        if (!world.isRemote && (tickDistance <= 1 || world.getTotalWorldTime() % tickDistance == tickPart))
         {
             if (receiver == null)
             {
@@ -206,6 +207,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
         {
            receiverPos = new BlockPos(compound.getInteger("rec_x"), compound.getInteger("rec_y"), compound.getInteger("rec_z"));
         }
+        onContentsChanged(upgrades, 0);
     }
 
     @Override
@@ -476,9 +478,11 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
         if (handler == upgrades)
         {
             boolean hasUpgrade = false;
+            int speedUpgrades = 0;
             for (int i = 0; i < UPGRADES_SIZE; i++)
             {
                 hasUpgrade |= handler.getStackInSlot(i).getItem() == MNUItems.upgradeEnergy;
+                speedUpgrades += handler.getStackInSlot(i).getItem() == MNUItems.upgradeSpeed ? handler.getStackInSlot(i).getCount() : 0;
             }
             if (hasUpgrade && !isUpgraded)
             {
@@ -492,6 +496,8 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
                 energyStorage.setCapacity(STORAGE);
                 isUpgraded = false;
             }
+            tickDistance = Math.max(20 - speedUpgrades, 1);
+            tickPart = tickPart % tickDistance;
         }
     }
 

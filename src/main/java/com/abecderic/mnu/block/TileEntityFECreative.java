@@ -10,8 +10,6 @@ import javax.annotation.Nullable;
 
 public class TileEntityFECreative extends TileEntity
 {
-    private static final int STORAGE = -1;
-    private static final int MAX_OUT = 2560;
     private EnergyStorageCreative energyStorage = new EnergyStorageCreative();
 
     @Override
