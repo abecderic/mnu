@@ -80,6 +80,13 @@ public class MultipleFluidTanks implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, boolean doDrain)
     {
+        for (int i = 0; i < amount; i++)
+        {
+            if (tanks[i].getFluid() != null)
+            {
+                return drain(tanks[i].getFluid(), doDrain);
+            }
+        }
         return null;
     }
 
