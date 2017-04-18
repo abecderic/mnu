@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
@@ -27,6 +28,8 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     private static final int STORAGE = 81920;
     private static final int MAX_IN = 512;
     private static final int TANK_STORAGE = 64000000;
+    private static final int ENERGY_USAGE = 4;
+    private static final int DM_USAGE = 8;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0);
     private MicrobucketsFluidTank tankIn = new MicrobucketsFluidTank(TANK_STORAGE);
     private MicrobucketsFluidTank tankOut = new MicrobucketsFluidTank(TANK_STORAGE);
@@ -48,7 +51,38 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
             if (!isComplete) return;
-
+            if (energyStorage.getEnergyStored() >= ENERGY_USAGE * mirrors.size())
+            {
+                if (tankOut.getMicrobucketsCapacity() - tankOut.getMicrobucketsVolume() >= mirrors.size())
+                {
+                    if (tankIn.getMicrobucketsVolume() >= mirrors.size() * DM_USAGE)
+                    {
+                        energyStorage.removeEnergy(ENERGY_USAGE * mirrors.size());
+                        tankIn.drainMicrobuckets(MNUFluids.fluidDarkMatter, DM_USAGE * mirrors.size());
+                        tankOut.fillMicrobuckets(MNUFluids.fluidMNU, mirrors.size());
+                    }
+                }
+            }
+            else
+            {
+                for (EnumFacing facing : EnumFacing.VALUES)
+                {
+                    BlockPos pos = getPos().offset(facing);
+                    TileEntity te = world.getTileEntity(pos);
+                    if (te != null)
+                    {
+                        IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
+                        if (energy != null)
+                        {
+                            int extracted = energy.extractEnergy(Math.min(MAX_IN * 20, energy.getMaxEnergyStored() - energy.getEnergyStored()), false);
+                            if (extracted > 0)
+                            {
+                                energyStorage.addEnergy(extracted);
+                            }
+                        }
+                    }
+                }
+            }
             markDirty();
         }
     }
