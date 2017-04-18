@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/mirror_side",
+		"east": "mnu:blocks/mirror_side",
+		"south": "mnu:blocks/mirror_side",
+		"west": "mnu:blocks/mirror_side",
+		"up": "mnu:blocks/mirror_top",
+		"down": "mnu:blocks/mirror_bottom",
+		"all": "mnu:blocks/mirror_top"
+	}
+}

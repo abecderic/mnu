@@ -58,3 +58,4 @@ tile.mnu:dm_pump.name=Dark Matter Pump
 tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU
+tile.mnu:mirror.name=Mirror

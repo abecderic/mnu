@@ -22,6 +22,9 @@ public class MNUBlocks
     public static final String CUBE_SENDER = "cube_sender";
     public static Block cubeSender;
 
+    public static final String MIRROR = "mirror";
+    public static Block mirror;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -35,6 +38,10 @@ public class MNUBlocks
         cubeSender = new BlockCubeSender();
         registerBlockWithItemBlock(cubeSender, CUBE_SENDER, new ItemBlockTooltip(cubeSender, "msg.cube_sender.catchphrase"));
         registerTileEntity(cubeSender, CUBE_SENDER, TileEntityCubeSender.class);
+
+        mirror = new BlockMirror();
+        registerBlock(mirror, MIRROR);
+        registerTileEntity(mirror, MIRROR, TileEntityMirror.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -64,6 +71,7 @@ public class MNUBlocks
         registerModel(feGen, FE_GEN);
         registerModel(dmPump, DM_PUMP);
         registerModel(cubeSender, CUBE_SENDER);
+        registerModel(mirror, MIRROR);
     }
 
     private static void registerModel(Block block, String name)
