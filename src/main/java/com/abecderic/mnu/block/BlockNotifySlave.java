@@ -60,4 +60,6 @@ public abstract class BlockNotifySlave extends BlockContainer
             }
         }
     }
+
+    public abstract void tryLink(World world, BlockPos pos, BlockPos master, EntityPlayer player);
 }

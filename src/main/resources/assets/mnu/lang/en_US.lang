@@ -39,6 +39,8 @@ item.mnu:upgrade.side.west=West
 item.mnu:upgrade.tip=Use on block to change side
 item.mnu:upgrade.tip2=Sneak and use to change mode
 item.mnu:wrench.name=Wrench
+item.mnu:wrench.link.master=Started linking to master.
+item.mnu:wrench.link.nomaster=§cThis wrench is not linked to a block.
 
 itemGroup.mnu=MNU
 
@@ -52,11 +54,17 @@ msg.fe_gen.energy=Energy: %s / %s
 msg.fe_gen.tip=Insert burnable material
 msg.fe_gen.tip2=via automatic ways.
 msg.fe_gen.tip3=(e.g. with a hopper)
+msg.mirror.ylevel=§cThis mirror is not on the correct y level (%s§c).
+msg.mirror.seesky=§cThis block must be able to see the sky.
+msg.mirror.success=Successfully linked this mirror to the controller.
+msg.mirror.toofar=§cThis mirror is too far from the controller.
 msg.solar_fusion.energy=Energy: %s / %s
 msg.solar_fusion.tank=%s: %s mB / %s mB
 msg.solar_fusion.tank.empty=Tank Empty
 msg.solar_fusion.incomplete=§cMissing Solar Fusion Reactor Casing at (%s§c, %s§c, %s§c)
 msg.solar_fusion.incomplete2=§cBlock must be air at (%s§c, %s§c, %s§c)
+msg.solar_fusion.mirrors=Connected to %s mirrors at y level %s.
+msg.solar_fusion.mirrors.empty=Not connected to mirrors. Place some and use the wrench to connect.
 
 tile.mnu:cube_sender.name=Cube Sender
 tile.mnu:dm_pump.name=Dark Matter Pump

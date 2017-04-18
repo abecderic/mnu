@@ -154,6 +154,15 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         return new TextComponentTranslation("msg.solar_fusion.tank.empty");
     }
 
+    public ITextComponent getMirrorsString()
+    {
+        if (mirrors != null && !mirrors.isEmpty())
+        {
+            return new TextComponentTranslation("msg.solar_fusion.mirrors", mirrors.size(), getMirrorsYLevel());
+        }
+        return new TextComponentTranslation("msg.solar_fusion.mirrors.empty");
+    }
+
     public boolean isComplete()
     {
         return isComplete;
@@ -194,6 +203,10 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         else
         {
             mirrors.remove(pos);
+            if (mirrors.isEmpty())
+            {
+                mirrorsY = -1;
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ public class BlockSolarFusionController extends BlockContainer
                     playerIn.sendMessage(gen.getEnergyString());
                     playerIn.sendMessage(gen.getTankInString());
                     playerIn.sendMessage(gen.getTankOutString());
+                    playerIn.sendMessage(gen.getMirrorsString());
                 }
             }
         }

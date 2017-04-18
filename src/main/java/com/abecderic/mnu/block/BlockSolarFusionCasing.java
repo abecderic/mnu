@@ -2,7 +2,9 @@ package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -29,5 +31,11 @@ public class BlockSolarFusionCasing extends BlockNotifySlave
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
         return new TileEntitySolarFusionCasing();
+    }
+
+    @Override
+    public void tryLink(World world, BlockPos pos, BlockPos master, EntityPlayer player)
+    {
+        /* NO-OP */
     }
 }
