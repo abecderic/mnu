@@ -1,11 +1,13 @@
 package com.abecderic.mnu.block;
 
+import com.abecderic.mnu.container.IInventoryChanged;
 import com.abecderic.mnu.entity.EntityCube;
 import com.abecderic.mnu.item.ItemUpgradeTransfer;
 import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.network.PacketCubeSender;
 import com.abecderic.mnu.util.EnergyStorageInternal;
+import com.abecderic.mnu.util.ItemStackHandlerUpdate;
 import com.abecderic.mnu.util.MultipleFluidTanks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,17 +33,19 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-public class TileEntityCubeSender extends TileEntity implements ITickable
+public class TileEntityCubeSender extends TileEntity implements ITickable, IInventoryChanged
 {
     private static final int STORAGE = 512000;
+    private static final int UPGRADED_STORAGE = 10240000;
     private static final int MAX_TRANSFER = 128;
+    private static final int UPGRADED_MAX_TRANSFER = 128000;
     private static final int CUBE_ENERGY_PER_HOP = 2048;
     public static final int BUFFER_SIZE = 9;
     public static final int TANKS = 4;
     private static final int TANK_CAPACITY = 8000;
     private static final int UPGRADES_SIZE = 4;
     private ItemStackHandler inventory = new ItemStackHandler(BUFFER_SIZE);
-    private ItemStackHandler upgrades = new ItemStackHandler(UPGRADES_SIZE);
+    private ItemStackHandlerUpdate upgrades = new ItemStackHandlerUpdate(UPGRADES_SIZE, this);
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_TRANSFER, MAX_TRANSFER);
     private MultipleFluidTanks tanks = new MultipleFluidTanks(TANKS, TANK_CAPACITY);
     private int tickPart;
@@ -53,6 +57,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
     private int redstoneMode = 0;
     private BlockPos receiverPos;
     private TileEntityCubeSender receiver;
+    private boolean isUpgraded = false;
 
     public TileEntityCubeSender()
     {
@@ -69,7 +74,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
             {
                 if (receiverPos == null)
                 {
-                    sendCube(true);
+                    sendCube(true, false);
                 }
                 else
                 {
@@ -142,7 +147,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
             {
                 if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
                 {
-                    sendCube(false);
+                    sendCube(false, false);
                 }
             }
             markDirty();
@@ -229,7 +234,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         return false;
     }
 
-    protected boolean sendCube(boolean fake)
+    protected boolean sendCube(boolean fake, boolean allEnergy)
     {
         int itemSlot = -1;
         Fluid fluid = null;
@@ -237,7 +242,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
         BlockPos pos = this.pos.offset(facing);
         if (!world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos)) return false;
-        int energyNeeded = CUBE_ENERGY_PER_HOP * (cubeHops + 1);
+        int energyNeeded = allEnergy ? energyStorage.getEnergyStored() + CUBE_ENERGY_PER_HOP : CUBE_ENERGY_PER_HOP * (cubeHops + 1);
         if (!fake)
         {
             /* pre-flight checks */
@@ -461,6 +466,31 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                     int amount = fluidHandler.fill(tanks.getTank(i).getFluid(), true);
                     tanks.getTank(i).drain(amount, true);
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onContentsChanged(IItemHandler handler, int slot)
+    {
+        if (handler == upgrades)
+        {
+            boolean hasUpgrade = false;
+            for (int i = 0; i < UPGRADES_SIZE; i++)
+            {
+                hasUpgrade |= handler.getStackInSlot(i).getItem() == MNUItems.upgradeEnergy;
+            }
+            if (hasUpgrade && !isUpgraded)
+            {
+                energyStorage.setMaxTransfer(UPGRADED_MAX_TRANSFER);
+                energyStorage.setCapacity(UPGRADED_STORAGE);
+                isUpgraded = true;
+            }
+            else if (!hasUpgrade && isUpgraded)
+            {
+                energyStorage.setMaxTransfer(MAX_TRANSFER);
+                energyStorage.setCapacity(STORAGE);
+                isUpgraded = false;
             }
         }
     }

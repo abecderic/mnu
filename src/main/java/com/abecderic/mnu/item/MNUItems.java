@@ -22,6 +22,9 @@ public class MNUItems
     public static final String UPGRADE_FLUIDS_TRANSFER = "upgrade_fluids_transfer";
     public static Item upgradeFluidsTransfer;
 
+    public static final String UPGRADE_ENERGY = "upgrade_energy";
+    public static Item upgradeEnergy;
+
     public static void registerItems()
     {
         dmScanner = new ItemDMScanner();
@@ -36,6 +39,9 @@ public class MNUItems
 
         upgradeFluidsTransfer = new ItemUpgradeTransfer(ItemUpgradeTransfer.Type.FLUIDS);
         registerItem(upgradeFluidsTransfer, UPGRADE_FLUIDS_TRANSFER);
+
+        upgradeEnergy = new ItemUpgradeEnergy();
+        registerItem(upgradeEnergy, UPGRADE_ENERGY);
     }
 
     private static void registerItem(Item item, String name)
@@ -50,6 +56,7 @@ public class MNUItems
         registerModel(wrench, WRENCH);
         registerModelWithSameMeta(upgradeItemsTransfer, UPGRADE_ITEMS_TRANSFER, 16);
         registerModelWithSameMeta(upgradeFluidsTransfer, UPGRADE_FLUIDS_TRANSFER, 16);
+        registerModel(upgradeEnergy, UPGRADE_ENERGY);
     }
 
     private static void registerModel(Item item, String name)

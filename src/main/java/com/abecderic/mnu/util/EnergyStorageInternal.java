@@ -54,4 +54,16 @@ public class EnergyStorageInternal extends EnergyStorage
     {
         return df.format(super.getMaxEnergyStored());
     }
+
+    public void setMaxTransfer(int maxTransfer)
+    {
+        super.maxExtract = maxTransfer;
+        super.maxReceive = maxTransfer;
+    }
+
+    public void setCapacity(int capacity)
+    {
+        super.capacity = capacity;
+        super.energy = Math.min(super.energy, super.capacity);
+    }
 }
