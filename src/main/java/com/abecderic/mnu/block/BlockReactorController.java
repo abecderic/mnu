@@ -52,64 +52,64 @@ public class BlockReactorController extends BlockContainer
                     EnumFacing direction = state.getValue(FACING);
                     BlockPos center = pos.offset(state.getValue(FACING), 4);
                     String[] layer0 = {"  ss ss  ", " sss sss ", "sssssssss", "sss_ _sss", "  s s s  ", "sss_ _sss", "sssssssss", " sss sss ", "  ss ss  "};
-                    if (!checkYLevel(worldIn, center, 0, layer0, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 0, layer0, playerIn))
                     {
                         return true;
                     }
                     String[] layer1 = {"  sssss  ", " sssssss ", "sssssssss", "sss___sss", "sss___sss", "sss___sss", "sssssssss", " sssssss ", "  sssss  "};
-                    if (!checkYLevel(worldIn, center, 1, layer1, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 1, layer1, playerIn))
                     {
                         return true;
                     }
-                    if (!checkYLevel(worldIn, center, -1, layer1, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, -1, layer1, playerIn))
                     {
                         return true;
                     }
                     String[] layer2 = {"         ", "   sss   ", "  sssss  ", " sssssss ", " sss_sss ", " sssssss ", "  sssss  ", "   sss   ", "         "};
-                    if (!checkYLevel(worldIn, center, 2, layer2, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 2, layer2, playerIn))
                     {
                         return true;
                     }
-                    if (!checkYLevel(worldIn, center, -2, layer2, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, -2, layer2, playerIn))
                     {
                         return true;
                     }
                     String[] layer3 = {"         ", "         ", "   sss   ", "  sssss  ", "  ss_ss  ", "  sssss  ", "   sss   ", "         ", "         "};
-                    if (!checkYLevel(worldIn, center, 3, layer3, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 3, layer3, playerIn))
                     {
                         return true;
                     }
-                    if (!checkYLevel(worldIn, center, -3, layer3, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, -3, layer3, playerIn))
                     {
                         return true;
                     }
                     String[] layer4 = {"         ", "         ", "         ", "   ttt   ", "   t_t   ", "   ttt   ", "         ", "         ", "         "};
                     for (int i = 0; i < 8; i++)
                     {
-                        if (!checkYLevel(worldIn, center, 4+i, layer4, playerIn))
+                        if (!checkYLevel(worldIn, pos, center, 4+i, layer4, playerIn))
                         {
                             return true;
                         }
-                        if (!checkYLevel(worldIn, center, -4-i, layer4, playerIn))
+                        if (!checkYLevel(worldIn, pos, center, -4-i, layer4, playerIn))
                         {
                             return true;
                         }
                     }
                     String[] layer5 = {"         ", "         ", "         ", "   sss   ", "   s_s   ", "   sss   ", "         ", "         ", "         "};
-                    if (!checkYLevel(worldIn, center, 12, layer5, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 12, layer5, playerIn))
                     {
                         return true;
                     }
-                    if (!checkYLevel(worldIn, center, -12, layer5, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, -12, layer5, playerIn))
                     {
                         return true;
                     }
                     String[] layer6 = {"         ", "         ", "         ", "   sss   ", "   sss   ", "   sss   ", "         ", "         ", "         "};
-                    if (!checkYLevel(worldIn, center, 13, layer6, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, 13, layer6, playerIn))
                     {
                         return true;
                     }
-                    if (!checkYLevel(worldIn, center, -13, layer6, playerIn))
+                    if (!checkYLevel(worldIn, pos, center, -13, layer6, playerIn))
                     {
                         return true;
                     }
@@ -172,7 +172,7 @@ public class BlockReactorController extends BlockContainer
         return EnumBlockRenderType.MODEL;
     }
 
-    private boolean checkYLevel(World worldIn, BlockPos center, int y, String[] pattern, EntityPlayer playerIn)
+    private boolean checkYLevel(World worldIn, BlockPos master, BlockPos center, int y, String[] pattern, EntityPlayer playerIn)
     {
         for (int x = -4; x <= 4; x++)
         {
@@ -210,7 +210,7 @@ public class BlockReactorController extends BlockContainer
                     TileEntity checkTE = worldIn.getTileEntity(p);
                     if (checkTE != null && checkTE instanceof TileEntityNotifySlave)
                     {
-                        ((TileEntityNotifySlave) checkTE).setMaster(p);
+                        ((TileEntityNotifySlave) checkTE).setMaster(master);
                     }
                     else
                     {
