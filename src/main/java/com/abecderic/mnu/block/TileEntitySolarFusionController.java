@@ -1,7 +1,9 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.fluid.MNUFluids;
-import com.abecderic.mnu.util.*;
+import com.abecderic.mnu.util.EnergyStorageInternal;
+import com.abecderic.mnu.util.MicrobucketsFluidTank;
+import com.abecderic.mnu.util.TwoMicrobucketsFluidTanksHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,6 +19,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TileEntitySolarFusionController extends TileEntity implements ITickable, INotifyMaster
 {
@@ -29,6 +33,8 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     private TwoMicrobucketsFluidTanksHandler handler = new TwoMicrobucketsFluidTanksHandler(MNUFluids.fluidDarkMatter, tankIn, tankOut);
     private int tickPart;
     private boolean isComplete;
+    private Set<BlockPos> mirrors = new HashSet<>();
+    private int mirrorsY = -1;
 
     public TileEntitySolarFusionController()
     {
@@ -83,6 +89,13 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0, compound.getInteger("storage"));
         tankIn.deserializeNBT(compound.getCompoundTag("tankIn"));
         tankOut.deserializeNBT(compound.getCompoundTag("tankOut"));
+        mirrorsY = compound.getInteger("mirrorsY");
+        int[] mirrorsArray = compound.getIntArray("mirrors");
+        mirrors = new HashSet<>();
+        for (int i = 0; i < mirrorsArray.length; i += 2)
+        {
+            mirrors.add(new BlockPos(mirrorsArray[i], mirrorsY, mirrorsArray[i+1]));
+        }
     }
 
     @Override
@@ -92,6 +105,15 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         compound.setInteger("storage", energyStorage.getEnergyStored());
         compound.setTag("tankIn", tankIn.serializeNBT());
         compound.setTag("tankOut", tankOut.serializeNBT());
+        int[] mirrorsArray = new int[mirrors.size() * 2];
+        int i = 0;
+        for (BlockPos mirror : mirrors)
+        {
+            mirrorsArray[i++] = mirror.getX();
+            mirrorsArray[i++] = mirror.getZ();
+        }
+        compound.setInteger("mirrorsY", mirrorsY);
+        compound.setIntArray("mirrors", mirrorsArray);
         return compound;
     }
 
@@ -142,16 +164,36 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         isComplete = complete;
     }
 
+    public int getMirrorsYLevel()
+    {
+        return mirrorsY;
+    }
+
     @Override
     public void addBlock(BlockPos pos)
     {
         System.out.println("add block " + pos);
+        if (mirrorsY < 0 || pos.getY() == mirrorsY)
+        {
+            mirrors.add(pos);
+            if (mirrorsY < 0)
+            {
+                mirrorsY = pos.getY();
+            }
+        }
     }
 
     @Override
     public void removeBlock(BlockPos pos)
     {
         System.out.println("remove block " + pos);
-        setComplete(false);
+        if (pos.getY() > this.pos.getY())
+        {
+            setComplete(false);
+        }
+        else
+        {
+            mirrors.remove(pos);
+        }
     }
 }

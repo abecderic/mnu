@@ -27,24 +27,24 @@ public abstract class BlockNotifySlave extends BlockContainer
     public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player)
     {
         super.onBlockHarvested(worldIn, pos, state, player);
-        notify(worldIn, pos);
+        notifyBlockRemoved(worldIn, pos);
     }
 
     @Override
     public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn)
     {
         super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
-        notify(worldIn, pos);
+        notifyBlockRemoved(worldIn, pos);
     }
 
     @Override
     public void onBlockDestroyedByPlayer(World worldIn, BlockPos pos, IBlockState state)
     {
         super.onBlockDestroyedByPlayer(worldIn, pos, state);
-        notify(worldIn, pos);
+        notifyBlockRemoved(worldIn, pos);
     }
 
-    private void notify(World world, BlockPos pos)
+    protected void notifyBlockRemoved(World world, BlockPos pos)
     {
         TileEntity te = world.getTileEntity(pos);
         if (te != null && te instanceof TileEntityNotifySlave)
