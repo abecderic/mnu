@@ -51,7 +51,7 @@ public class BlockReactorController extends BlockContainer
                 {
                     EnumFacing direction = state.getValue(FACING);
                     BlockPos center = pos.offset(state.getValue(FACING), 4);
-                    String[] layer0 = {"  ss ss  ", " sss sss ", "sssssssss", "sss___sss", "  s___s  ", "sss___sss", "sssssssss", " sss sss ", "  ss ss  "};
+                    String[] layer0 = {"  ss ss  ", " sss sss ", "sssssssss", "sss_ _sss", "  s s s  ", "sss_ _sss", "sssssssss", " sss sss ", "  ss ss  "};
                     if (!checkYLevel(worldIn, center, 0, layer0, playerIn))
                     {
                         return true;
@@ -229,13 +229,20 @@ public class BlockReactorController extends BlockContainer
         {
             BlockPos p1 = center.offset(EnumFacing.getHorizontal(i), 3);
             BlockPos p2 = center.offset(EnumFacing.getHorizontal(i), 4);
+            BlockPos p3 = center.offset(EnumFacing.getHorizontal(i), 1);
             IBlockState b1 = worldIn.getBlockState(p1);
             IBlockState b2 = worldIn.getBlockState(p2);
+            IBlockState b3 = worldIn.getBlockState(p3);
             if (i == facing.getOpposite().getHorizontalIndex())
             {
                 if (b1.getBlock() != MNUBlocks.reactorCasing || b1.getValue(BlockReactorCasing.TRANSPARENT))
                 {
                     playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete", p1.getX(), p1.getY(), p1.getZ()));
+                    return false;
+                }
+                if (b3.getBlock() != MNUBlocks.reactorCasing || b1.getValue(BlockReactorCasing.TRANSPARENT))
+                {
+                    playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete", p3.getX(), p3.getY(), p3.getZ()));
                     return false;
                 }
             }
@@ -249,6 +256,11 @@ public class BlockReactorController extends BlockContainer
                 if (!b2.getBlock().isAir(b2, worldIn, p2))
                 {
                     playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete2", p2.getX(), p2.getY(), p2.getZ()));
+                    return false;
+                }
+                if (!b3.getBlock().isAir(b3, worldIn, p3))
+                {
+                    playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete2", p3.getX(), p3.getY(), p3.getZ()));
                     return false;
                 }
             }

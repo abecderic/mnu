@@ -236,15 +236,24 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
         return false;
     }
 
+    protected void doSendCube()
+    {
+        sendCube(false, isUpgraded);
+    }
+
     protected boolean sendCube(boolean fake, boolean allEnergy)
     {
         int itemSlot = -1;
         Fluid fluid = null;
-        boolean extraEnergy = false;
+        boolean extraEnergy = allEnergy;
         EnumFacing facing = world.getBlockState(getPos()).getValue(BlockCubeSender.FACING);
         BlockPos pos = this.pos.offset(facing);
         if (!world.getBlockState(pos).getBlock().isAir(world.getBlockState(pos), world, pos)) return false;
-        int energyNeeded = allEnergy ? energyStorage.getEnergyStored() + CUBE_ENERGY_PER_HOP : CUBE_ENERGY_PER_HOP * (cubeHops + 1);
+        int energyNeeded = allEnergy ? Math.max(energyStorage.getEnergyStored(), CUBE_ENERGY_PER_HOP * (cubeHops + 1)) : CUBE_ENERGY_PER_HOP * (cubeHops + 1);
+        if (allEnergy)
+        {
+            itemSlot = -2;
+        }
         if (!fake)
         {
             /* pre-flight checks */
@@ -289,7 +298,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
                 FluidStack stack = tanks.drain(new FluidStack(fluid, FLUID_MIN), true);
                 cube.setFluid(stack);
             }
-            else if (extraEnergy)
+            else if (extraEnergy && !allEnergy)
             {
                 energyStorage.removeEnergy(ENERGY_MIN);
                 cube.setEnergy(cube.getEnergy() + ENERGY_MIN);
@@ -297,6 +306,11 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
         }
         world.spawnEntity(cube);
         return true;
+    }
+
+    protected void addEnergyInternal(int energy)
+    {
+        energyStorage.addEnergy(energy);
     }
 
     private boolean canAccept(Item item, int amount)
