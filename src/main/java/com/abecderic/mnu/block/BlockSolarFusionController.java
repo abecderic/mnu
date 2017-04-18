@@ -10,6 +10,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -41,9 +42,23 @@ public class BlockSolarFusionController extends BlockContainer
             if (te instanceof TileEntitySolarFusionController)
             {
                 TileEntitySolarFusionController gen = (TileEntitySolarFusionController) te;
-                playerIn.sendMessage(gen.getEnergyString());
-                playerIn.sendMessage(gen.getTankInString());
-                playerIn.sendMessage(gen.getTankOutString());
+                if (!gen.isComplete())
+                {
+                    if (!checkForStructure(worldIn, pos, gen, playerIn))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        gen.setComplete(true);
+                    }
+                }
+                if (gen.isComplete())
+                {
+                    playerIn.sendMessage(gen.getEnergyString());
+                    playerIn.sendMessage(gen.getTankInString());
+                    playerIn.sendMessage(gen.getTankOutString());
+                }
             }
         }
         return true;
@@ -60,5 +75,50 @@ public class BlockSolarFusionController extends BlockContainer
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.MODEL;
+    }
+
+    private boolean checkForStructure(World worldIn, BlockPos pos, TileEntitySolarFusionController gen, EntityPlayer playerIn)
+    {
+        for (int y = 1; y < 4; y++)
+        {
+            for (int x = -1; x < 2; x++)
+            {
+                for (int z = -1; z < 2; z++)
+                {
+                    BlockPos checkPos = pos.add(x, y, z);
+                    if (y == 2 && x == 0 && z == 0)
+                    {
+                        if (!worldIn.isAirBlock(checkPos))
+                        {
+                            gen.setComplete(false);
+                            playerIn.sendMessage(new TextComponentTranslation("msg.solar_fusion.incomplete2", checkPos.getX(), checkPos.getY(), checkPos.getZ()));
+                            return false;
+                        }
+                        continue;
+                    }
+                    if (worldIn.getBlockState(checkPos).getBlock() == MNUBlocks.solarFusionCasing)
+                    {
+                        TileEntity checkTE = worldIn.getTileEntity(checkPos);
+                        if (checkTE != null && checkTE instanceof TileEntityNotifySlave)
+                        {
+                            ((TileEntityNotifySlave) checkTE).setMaster(pos);
+                        }
+                        else
+                        {
+                            gen.setComplete(false);
+                            playerIn.sendMessage(new TextComponentTranslation("msg.solar_fusion.incomplete", checkPos.getX(), checkPos.getY(), checkPos.getZ()));
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        gen.setComplete(false);
+                        playerIn.sendMessage(new TextComponentTranslation("msg.solar_fusion.incomplete", checkPos.getX(), checkPos.getY(), checkPos.getZ()));
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

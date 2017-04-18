@@ -7,12 +7,12 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class BlockMirror extends BlockNotifySlave
+public class BlockSolarFusionCasing extends BlockNotifySlave
 {
-    protected BlockMirror()
+    protected BlockSolarFusionCasing()
     {
         super(Material.IRON);
-        setUnlocalizedName(MNUBlocks.MIRROR);
+        setUnlocalizedName(MNUBlocks.SOLAR_FUSION_CASING);
         setHardness(2.2f);
         setResistance(5.0f);
         setCreativeTab(MNU.TAB);
@@ -21,13 +21,13 @@ public class BlockMirror extends BlockNotifySlave
     @Override
     public String getUnlocalizedName()
     {
-        return "tile." + MNU.MODID + ":" + MNUBlocks.MIRROR;
+        return "tile." + MNU.MODID + ":" + MNUBlocks.SOLAR_FUSION_CASING;
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
-        return new TileEntityMirror();
+        return new TileEntitySolarFusionCasing();
     }
 }

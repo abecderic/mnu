@@ -18,17 +18,17 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
 
-public class TileEntitySolarFusionController extends TileEntity implements ITickable
+public class TileEntitySolarFusionController extends TileEntity implements ITickable, INotifyMaster
 {
     private static final int STORAGE = 81920;
     private static final int MAX_IN = 512;
-    private static final int ENERGY_USAGE = 10240;
     private static final int TANK_STORAGE = 64000000;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0);
     private MicrobucketsFluidTank tankIn = new MicrobucketsFluidTank(TANK_STORAGE);
     private MicrobucketsFluidTank tankOut = new MicrobucketsFluidTank(TANK_STORAGE);
     private TwoMicrobucketsFluidTanksHandler handler = new TwoMicrobucketsFluidTanksHandler(MNUFluids.fluidDarkMatter, tankIn, tankOut);
     private int tickPart;
+    private boolean isComplete;
 
     public TileEntitySolarFusionController()
     {
@@ -41,6 +41,7 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     {
         if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
+            if (!isComplete) return;
 
             markDirty();
         }
@@ -129,5 +130,28 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
             }
         }
         return new TextComponentTranslation("msg.solar_fusion.tank.empty");
+    }
+
+    public boolean isComplete()
+    {
+        return isComplete;
+    }
+
+    public void setComplete(boolean complete)
+    {
+        isComplete = complete;
+    }
+
+    @Override
+    public void addBlock(BlockPos pos)
+    {
+        System.out.println("add block " + pos);
+    }
+
+    @Override
+    public void removeBlock(BlockPos pos)
+    {
+        System.out.println("remove block " + pos);
+        setComplete(false);
     }
 }

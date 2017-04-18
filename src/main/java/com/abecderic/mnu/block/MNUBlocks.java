@@ -28,6 +28,9 @@ public class MNUBlocks
     public static final String SOLAR_FUSION_CONTROLLER = "solar_fusion_controller";
     public static Block solarFusionController;
 
+    public static final String SOLAR_FUSION_CASING = "solar_fusion_casing";
+    public static Block solarFusionCasing;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -45,6 +48,14 @@ public class MNUBlocks
         mirror = new BlockMirror();
         registerBlock(mirror, MIRROR);
         registerTileEntity(mirror, MIRROR, TileEntityMirror.class);
+
+        solarFusionController = new BlockSolarFusionController();
+        registerBlock(solarFusionController, SOLAR_FUSION_CONTROLLER);
+        registerTileEntity(solarFusionController, SOLAR_FUSION_CONTROLLER, TileEntitySolarFusionController.class);
+
+        solarFusionCasing = new BlockSolarFusionCasing();
+        registerBlock(solarFusionCasing, SOLAR_FUSION_CASING);
+        registerTileEntity(solarFusionCasing, SOLAR_FUSION_CASING, TileEntitySolarFusionCasing.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -76,6 +87,7 @@ public class MNUBlocks
         registerModel(cubeSender, CUBE_SENDER);
         registerModel(mirror, MIRROR);
         registerModel(solarFusionController, SOLAR_FUSION_CONTROLLER);
+        registerModel(solarFusionCasing, SOLAR_FUSION_CASING);
     }
 
     private static void registerModel(Block block, String name)
