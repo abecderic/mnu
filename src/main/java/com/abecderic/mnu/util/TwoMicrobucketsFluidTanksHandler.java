@@ -29,7 +29,7 @@ public class TwoMicrobucketsFluidTanksHandler implements IFluidHandler
     @Override
     public int fill(FluidStack resource, boolean doFill)
     {
-        if (resource.getFluid().equals(fluid))
+        if (resource != null && resource.getFluid() != null && resource.getFluid().equals(fluid))
         {
             return tankIn.fill(resource, doFill);
         }

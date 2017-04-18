@@ -70,7 +70,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 if (receiverPos == null)
                 {
                     sendCube(true);
-                    return;
                 }
                 else
                 {
@@ -89,7 +88,6 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
             {
                 receiver = null;
                 receiverPos = null;
-                return;
             }
             /* handle upgrades */
             for (int i = 0; i < UPGRADES_SIZE; i++)
@@ -140,9 +138,12 @@ public class TileEntityCubeSender extends TileEntity implements ITickable
                 }
             }
             /* send cube */
-            if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
+            if (receiver != null)
             {
-                sendCube(false);
+                if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
+                {
+                    sendCube(false);
+                }
             }
             markDirty();
         }

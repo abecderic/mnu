@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/solar_fusion_controller_side",
+		"east": "mnu:blocks/solar_fusion_controller_side",
+		"south": "mnu:blocks/solar_fusion_controller_side",
+		"west": "mnu:blocks/solar_fusion_controller_side",
+		"up": "mnu:blocks/solar_fusion_controller_top",
+		"down": "mnu:blocks/solar_fusion_controller_top",
+		"all": "mnu:blocks/solar_fusion_controller_top"
+	}
+}

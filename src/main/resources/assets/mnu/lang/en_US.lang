@@ -52,7 +52,10 @@ msg.fe_gen.energy=Energy: %s / %s
 msg.fe_gen.tip=Insert burnable material
 msg.fe_gen.tip2=via automatic ways.
 msg.fe_gen.tip3=(e.g. with a hopper)
-msg.solar_fusion.incomplete=§cMissing Solar Fusion Casing at (%s§c, %s§c, %s§c)
+msg.solar_fusion.energy=Energy: %s / %s
+msg.solar_fusion.tank=%s: %s mB / %s mB
+msg.solar_fusion.tank.empty=Tank Empty
+msg.solar_fusion.incomplete=§cMissing Solar Fusion Reactor Casing at (%s§c, %s§c, %s§c)
 msg.solar_fusion.incomplete2=§cBlock must be air at (%s§c, %s§c, %s§c)
 
 tile.mnu:cube_sender.name=Cube Sender
@@ -61,3 +64,5 @@ tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU
 tile.mnu:mirror.name=Mirror
+tile.mnu:solar_fusion_casing.name=Solar Fusion Reactor Casing
+tile.mnu:solar_fusion_controller.name=Solar Fusion Reactor Controller
