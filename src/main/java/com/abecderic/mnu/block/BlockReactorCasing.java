@@ -80,40 +80,22 @@ public class BlockReactorCasing extends BlockNotifySlave
     }
 
     @Override
-    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
-    {
-        super.getSubBlocks(itemIn, tab, list);
-        list.add(new ItemStack(itemIn, 1, 1));
-    }
-
-    @Override
-    public boolean isFullyOpaque(IBlockState state)
-    {
-        return !state.getValue(TRANSPARENT);
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state)
-    {
-        return !state.getValue(TRANSPARENT);
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        return !state.getValue(TRANSPARENT);
-    }
-
-    @Override
     public boolean isOpaqueCube(IBlockState state)
     {
         return !state.getValue(TRANSPARENT);
     }
 
     @Override
-    public boolean isTranslucent(IBlockState state)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
-        return !state.getValue(TRANSPARENT);
+        return !blockState.getValue(TRANSPARENT) || blockAccess.getBlockState(pos.offset(side)).getBlock() != MNUBlocks.reactorCasing || !blockAccess.getBlockState(pos.offset(side)).getValue(TRANSPARENT);
+    }
+
+    @Override
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list)
+    {
+        super.getSubBlocks(itemIn, tab, list);
+        list.add(new ItemStack(itemIn, 1, 1));
     }
 
     @SideOnly(Side.CLIENT)
