@@ -13,6 +13,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -46,7 +47,78 @@ public class BlockReactorController extends BlockContainer
             if (te instanceof TileEntityReactorController)
             {
                 TileEntityReactorController reactor = (TileEntityReactorController) te;
-                
+                if (!reactor.isComplete())
+                {
+                    EnumFacing direction = state.getValue(FACING);
+                    BlockPos center = pos.offset(state.getValue(FACING), 4);
+                    String[] layer0 = {"  ss ss  ", " sss sss ", "sssssssss", "sss___sss", "  s___s  ", "sss___sss", "sssssssss", " sss sss ", "  ss ss  "};
+                    if (!checkYLevel(worldIn, center, 0, layer0, playerIn))
+                    {
+                        return true;
+                    }
+                    String[] layer1 = {"  sssss  ", " sssssss ", "sssssssss", "sss___sss", "sss___sss", "sss___sss", "sssssssss", " sssssss ", "  sssss  "};
+                    if (!checkYLevel(worldIn, center, 1, layer1, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkYLevel(worldIn, center, -1, layer1, playerIn))
+                    {
+                        return true;
+                    }
+                    String[] layer2 = {"         ", "   sss   ", "  sssss  ", " sssssss ", " sss_sss ", " sssssss ", "  sssss  ", "   sss   ", "         "};
+                    if (!checkYLevel(worldIn, center, 2, layer2, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkYLevel(worldIn, center, -2, layer2, playerIn))
+                    {
+                        return true;
+                    }
+                    String[] layer3 = {"         ", "         ", "   sss   ", "  sssss  ", "  ss_ss  ", "  sssss  ", "   sss   ", "         ", "         "};
+                    if (!checkYLevel(worldIn, center, 3, layer3, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkYLevel(worldIn, center, -3, layer3, playerIn))
+                    {
+                        return true;
+                    }
+                    String[] layer4 = {"         ", "         ", "         ", "   ttt   ", "   t_t   ", "   ttt   ", "         ", "         ", "         "};
+                    for (int i = 0; i < 8; i++)
+                    {
+                        if (!checkYLevel(worldIn, center, 4+i, layer4, playerIn))
+                        {
+                            return true;
+                        }
+                        if (!checkYLevel(worldIn, center, -4-i, layer4, playerIn))
+                        {
+                            return true;
+                        }
+                    }
+                    String[] layer5 = {"         ", "         ", "         ", "   sss   ", "   s_s   ", "   sss   ", "         ", "         ", "         "};
+                    if (!checkYLevel(worldIn, center, 12, layer5, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkYLevel(worldIn, center, -12, layer5, playerIn))
+                    {
+                        return true;
+                    }
+                    String[] layer6 = {"         ", "         ", "         ", "   sss   ", "   sss   ", "   sss   ", "         ", "         ", "         "};
+                    if (!checkYLevel(worldIn, center, 13, layer6, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkYLevel(worldIn, center, -13, layer6, playerIn))
+                    {
+                        return true;
+                    }
+                    if (!checkCenterSpecial(worldIn, center, direction, playerIn))
+                    {
+                        return true;
+                    }
+                    reactor.setComplete(true);
+                }
             }
         }
         return true;
@@ -91,12 +163,96 @@ public class BlockReactorController extends BlockContainer
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
-        return new TileEntitySolarFusionController();
+        return new TileEntityReactorController();
     }
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.MODEL;
+    }
+
+    private boolean checkYLevel(World worldIn, BlockPos center, int y, String[] pattern, EntityPlayer playerIn)
+    {
+        for (int x = -4; x <= 4; x++)
+        {
+            for (int z = -4; z <= 4; z++)
+            {
+                char c = pattern[x+4].charAt(z+4);
+                BlockPos p = center.add(x, y, z);
+                IBlockState block = worldIn.getBlockState(p);
+                switch (c)
+                {
+                    case 's':
+                        if (block.getBlock() != MNUBlocks.reactorCasing || block.getValue(BlockReactorCasing.TRANSPARENT))
+                        {
+                            playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete", p.getX(), p.getY(), p.getZ()));
+                            return false;
+                        }
+                        break;
+                    case 't':
+                        if (block.getBlock() != MNUBlocks.reactorCasing || !block.getValue(BlockReactorCasing.TRANSPARENT))
+                        {
+                            playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete4", p.getX(), p.getY(), p.getZ()));
+                            return false;
+                        }
+                        break;
+                    case '_':
+                        if (!block.getBlock().isAir(block, worldIn, p))
+                        {
+                            playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete2", p.getX(), p.getY(), p.getZ()));
+                            return false;
+                        }
+                        break;
+                }
+                if (c == 's' || c == 't')
+                {
+                    TileEntity checkTE = worldIn.getTileEntity(p);
+                    if (checkTE != null && checkTE instanceof TileEntityNotifySlave)
+                    {
+                        ((TileEntityNotifySlave) checkTE).setMaster(p);
+                    }
+                    else
+                    {
+                        playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete", p.getX(), p.getY(), p.getZ()));
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkCenterSpecial(World worldIn, BlockPos center, EnumFacing facing, EntityPlayer playerIn)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            BlockPos p1 = center.offset(EnumFacing.getHorizontal(i), 3);
+            BlockPos p2 = center.offset(EnumFacing.getHorizontal(i), 4);
+            IBlockState b1 = worldIn.getBlockState(p1);
+            IBlockState b2 = worldIn.getBlockState(p2);
+            if (i == facing.getOpposite().getHorizontalIndex())
+            {
+                if (b1.getBlock() != MNUBlocks.reactorCasing || b1.getValue(BlockReactorCasing.TRANSPARENT))
+                {
+                    playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete", p1.getX(), p1.getY(), p1.getZ()));
+                    return false;
+                }
+            }
+            else
+            {
+                if (b1.getBlock() != MNUBlocks.cubeSender)
+                {
+                    playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete3", p1.getX(), p1.getY(), p1.getZ()));
+                    return false;
+                }
+                if (!b2.getBlock().isAir(b2, worldIn, p2))
+                {
+                    playerIn.sendMessage(new TextComponentTranslation("msg.reactor.incomplete2", p2.getX(), p2.getY(), p2.getZ()));
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
