@@ -25,6 +25,9 @@ public class MNUBlocks
     public static final String MIRROR = "mirror";
     public static Block mirror;
 
+    public static final String SOLAR_FUSION_CONTROLLER = "solar_fusion_controller";
+    public static Block solarFusionController;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -72,6 +75,7 @@ public class MNUBlocks
         registerModel(dmPump, DM_PUMP);
         registerModel(cubeSender, CUBE_SENDER);
         registerModel(mirror, MIRROR);
+        registerModel(solarFusionController, SOLAR_FUSION_CONTROLLER);
     }
 
     private static void registerModel(Block block, String name)
