@@ -51,6 +51,7 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         if (!world.isRemote && world.getTotalWorldTime() % 20 == tickPart)
         {
             if (!isComplete) return;
+            if (world.isRaining() || !world.isDaytime()) return;
             if (energyStorage.getEnergyStored() >= ENERGY_USAGE * mirrors.size())
             {
                 if (tankOut.getMicrobucketsCapacity() - tankOut.getMicrobucketsVolume() >= mirrors.size())
