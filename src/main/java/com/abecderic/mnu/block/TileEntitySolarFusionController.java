@@ -131,6 +131,7 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         {
             mirrors.add(new BlockPos(mirrorsArray[i], mirrorsY, mirrorsArray[i+1]));
         }
+        isComplete = compound.getBoolean("complete");
     }
 
     @Override
@@ -149,6 +150,7 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
         }
         compound.setInteger("mirrorsY", mirrorsY);
         compound.setIntArray("mirrors", mirrorsArray);
+        compound.setBoolean("complete", isComplete);
         return compound;
     }
 
