@@ -68,6 +68,7 @@ msg.solar_fusion.mirrors.empty=Not connected to mirrors. Place some and use the 
 
 tile.mnu:cube_sender.name=Cube Sender
 tile.mnu:dm_pump.name=Dark Matter Pump
+tile.mnu:fe_creative.name=Creative Generator
 tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU

@@ -16,6 +16,9 @@ public class MNUBlocks
     public static final String FE_GEN = "fe_generator";
     public static Block feGen;
 
+    public static final String FE_CREATIVE = "fe_creative";
+    public static Block feCreative;
+
     public static final String DM_PUMP = "dm_pump";
     public static Block dmPump;
 
@@ -36,6 +39,10 @@ public class MNUBlocks
         feGen = new BlockFEGenerator();
         registerBlockWithItemBlock(feGen, FE_GEN, new ItemBlockTooltip(feGen, "msg.fe_gen.tip", "msg.fe_gen.tip2", "msg.fe_gen.tip3"));
         registerTileEntity(feGen, FE_GEN, TileEntityFEGenerator.class);
+
+        feCreative = new BlockFECreative();
+        registerBlock(feCreative, FE_CREATIVE);
+        registerTileEntity(feCreative, FE_CREATIVE, TileEntityFECreative.class);
 
         dmPump = new BlockDMPump();
         registerBlockWithItemBlock(dmPump, DM_PUMP, new ItemBlockTooltip(dmPump, "msg.dm_pump.tip", "msg.dm_pump.tip2"));
@@ -83,6 +90,7 @@ public class MNUBlocks
     public static void registerModels()
     {
         registerModel(feGen, FE_GEN);
+        registerModel(feCreative, FE_CREATIVE);
         registerModel(dmPump, DM_PUMP);
         registerModel(cubeSender, CUBE_SENDER);
         registerModel(mirror, MIRROR);

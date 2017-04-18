@@ -1,0 +1,6 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"all": "mnu:blocks/fe_creative"
+	}
+}
