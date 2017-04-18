@@ -1,6 +1,8 @@
 {
   "forge_marker": 1,
   "variants": {
-    "normal": { "model": "mnu:mirror" }
+    "normal": { "model": "mnu:mirror" },
+    "linked=true": { "model": "mnu:mirror" },
+    "linked=false": { "model": "mnu:mirror_unlinked" }
   }
 }
