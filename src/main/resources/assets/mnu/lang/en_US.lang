@@ -1,4 +1,5 @@
 entity.cube.name=Cube
+entity.passenger_cube.name=Passenger Cube
 
 fluid.fluid_darkmatter=Dark Matter
 fluid.fluid_mnu=MNU
