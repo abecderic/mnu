@@ -147,7 +147,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
             {
                 if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
                 {
-                    sendCube(false, false);
+                    sendCube(false, isUpgraded);
                 }
             }
             markDirty();
@@ -493,5 +493,10 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
                 isUpgraded = false;
             }
         }
+    }
+
+    public boolean isUpgraded()
+    {
+        return isUpgraded;
     }
 }

@@ -36,5 +36,7 @@ public class ItemUpgradeEnergy extends Item
         super.addInformation(stack, playerIn, tooltip, advanced);
         tooltip.add(new TextComponentTranslation("item.mnu:upgrade_energy.tip").getFormattedText());
         tooltip.add(new TextComponentTranslation("item.mnu:upgrade_energy.tip2").getFormattedText());
+        tooltip.add(new TextComponentTranslation("item.mnu:upgrade_energy.tip3").getFormattedText());
+        tooltip.add(new TextComponentTranslation("item.mnu:upgrade_energy.tip4").getFormattedText());
     }
 }

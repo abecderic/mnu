@@ -148,6 +148,7 @@ public class EntityCube extends EntityThrowable
     {
         if (world.isRemote)
         {
+            if (getItem() == ItemStack.EMPTY && getFluid() == null && getEnergy() == 0) return;
             int particleAmount = 0;
             switch (Minecraft.getMinecraft().gameSettings.particleSetting)
             {
