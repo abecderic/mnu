@@ -1,6 +1,7 @@
 package com.abecderic.mnu.block;
 
 import com.abecderic.mnu.MNU;
+import com.abecderic.mnu.item.ItemBlockMulti;
 import com.abecderic.mnu.item.ItemBlockTooltip;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -34,6 +35,12 @@ public class MNUBlocks
     public static final String SOLAR_FUSION_CASING = "solar_fusion_casing";
     public static Block solarFusionCasing;
 
+    public static final String REACTOR_CONTROLLER = "reactor_controller";
+    public static Block reactorController;
+
+    public static final String REACTOR_CASING = "reactor_casing";
+    public static Block reactorCasing;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -57,12 +64,20 @@ public class MNUBlocks
         registerTileEntity(mirror, MIRROR, TileEntityMirror.class);
 
         solarFusionController = new BlockSolarFusionController();
-        registerBlock(solarFusionController, SOLAR_FUSION_CONTROLLER);
+        registerBlockWithItemBlock(solarFusionController, SOLAR_FUSION_CONTROLLER, new ItemBlockTooltip(solarFusionController, "msg.solar_fusion.tip", "msg.solar_fusion.tip2", "msg.solar_fusion.tip3"));
         registerTileEntity(solarFusionController, SOLAR_FUSION_CONTROLLER, TileEntitySolarFusionController.class);
 
         solarFusionCasing = new BlockSolarFusionCasing();
         registerBlock(solarFusionCasing, SOLAR_FUSION_CASING);
         registerTileEntity(solarFusionCasing, SOLAR_FUSION_CASING, TileEntitySolarFusionCasing.class);
+
+        reactorController = new BlockReactorController();
+        registerBlock(reactorController, REACTOR_CONTROLLER);
+        registerTileEntity(reactorController, REACTOR_CONTROLLER, TileEntityReactorController.class);
+
+        reactorCasing = new BlockReactorCasing();
+        registerBlockWithItemBlock(reactorCasing, REACTOR_CASING, new ItemBlockMulti(reactorCasing));
+        registerTileEntity(reactorCasing, REACTOR_CASING, TileEntityReactorCasing.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -96,6 +111,8 @@ public class MNUBlocks
         registerModel(mirror, MIRROR);
         registerModel(solarFusionController, SOLAR_FUSION_CONTROLLER);
         registerModel(solarFusionCasing, SOLAR_FUSION_CASING);
+        registerModel(reactorController, REACTOR_CONTROLLER);
+        registerMultipleModels(reactorCasing, REACTOR_CASING, 2);
     }
 
     private static void registerModel(Block block, String name)
@@ -104,5 +121,17 @@ public class MNUBlocks
                 new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0,
                 new ModelResourceLocation(MNU.MODID + ":" + name, "inventory"));
+    }
+
+    private static void registerMultipleModels(Block block, String name, int amount)
+    {
+        registerModel(block, name);
+        for (int i = 0; i < amount; i++)
+        {
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), i,
+                    new ModelResourceLocation(MNU.MODID + ":" + name + "_" + i, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), i,
+                    new ModelResourceLocation(MNU.MODID + ":" + name + "_" + i, "inventory"));
+        }
     }
 }

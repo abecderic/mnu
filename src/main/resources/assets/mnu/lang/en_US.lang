@@ -80,5 +80,7 @@ tile.mnu:fe_generator.name=Coal Burning Generator
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU
 tile.mnu:mirror.name=Mirror
+tile.mnu:reactor_casing.name=Reactor Casing
+tile.mnu:reactor_controller.name=Reactor Controller
 tile.mnu:solar_fusion_casing.name=Solar Fusion Reactor Casing
 tile.mnu:solar_fusion_controller.name=Solar Fusion Reactor Controller

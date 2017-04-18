@@ -1,0 +1,8 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "normal": { "model": "mnu:reactor_casing" },
+    "transparent=false": { "model": "mnu:reactor_casing" },
+    "transparent=true": { "model": "mnu:reactor_casing_transparent" }
+  }
+}

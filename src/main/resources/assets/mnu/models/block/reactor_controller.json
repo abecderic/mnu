@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "mnu:blocks/reactor_controller",
+		"east": "mnu:blocks/reactor_casing",
+		"south": "mnu:blocks/reactor_casing",
+		"west": "mnu:blocks/reactor_casing",
+		"up": "mnu:blocks/reactor_casing",
+		"down": "mnu:blocks/reactor_casing",
+		"all": "mnu:blocks/reactor_casing"
+	}
+}
