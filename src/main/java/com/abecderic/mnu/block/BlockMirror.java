@@ -29,6 +29,7 @@ public class BlockMirror extends BlockNotifySlave
         setResistance(5.0f);
         setCreativeTab(MNU.TAB);
         setTickRandomly(true);
+        setDefaultState(blockState.getBaseState().withProperty(LINKED, false));
     }
 
     @Override
