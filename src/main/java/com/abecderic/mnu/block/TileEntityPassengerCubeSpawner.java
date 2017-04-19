@@ -93,6 +93,12 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
     {
         super.readFromNBT(compound);
         energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0, compound.getInteger("storage"));
+        list.clear();
+        int[] pos = compound.getIntArray("points");
+        for (int i = 0; i < pos.length; i += 3)
+        {
+            list.add(new BlockPos(pos[i], pos[i+1], pos[i+2]));
+        }
     }
 
     @Override
@@ -100,6 +106,15 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
     {
         compound = super.writeToNBT(compound);
         compound.setInteger("storage", energyStorage.getEnergyStored());
+        int[] pos = new int[list.size() * 3];
+        int i = 0;
+        for (BlockPos p : list)
+        {
+            pos[i++] = p.getX();
+            pos[i++] = p.getY();
+            pos[i++] = p.getZ();
+        }
+        compound.setIntArray("points", pos);
         return compound;
     }
 
