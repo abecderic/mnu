@@ -4,6 +4,7 @@ import com.abecderic.mnu.block.TileEntityPassengerCubeSpawner;
 import com.abecderic.mnu.util.DataSerializerList;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -76,17 +77,23 @@ public class EntityPassengerCube extends Entity
         {
             if (index >= list.size())
             {
+                if (!getPassengers().isEmpty() && getPassengers().get(0) instanceof EntityPlayerMP)
+                {
+                    EntityPlayerMP e = (EntityPlayerMP) getPassengers().get(0);
+                    getPassengers().get(0).dismountRidingEntity();
+                    e.connection.setPlayerLocation(posX, posY, posZ, e.rotationYaw, e.cameraPitch);
+                }
                 this.setDead();
                 return;
             }
             double dx = origin.getX() + 0.5 - posX;
             double dy = origin.getY() + 0.5 - posY;
             double dz = origin.getZ() + 0.5 - posZ;
-            double distanceToLastSq = dx*dx + dy*dy - dz*dz;
+            double distanceToLastSq = dx*dx + dy*dy + dz*dz;
             dx = list.get(index).getX() + 0.5 - posX;
             dy = list.get(index).getY() + 0.5 - posY;
             dz = list.get(index).getZ() + 0.5 - posZ;
-            double distanceToNextSq = dx*dx + dy*dy - dz*dz;
+            double distanceToNextSq = dx*dx + dy*dy + dz*dz;
             if (lastDistanceToNextSq < 0)
                 lastDistanceToNextSq = distanceToNextSq;
             double dist = Math.sqrt(Math.min(distanceToLastSq, distanceToNextSq));
@@ -94,7 +101,7 @@ public class EntityPassengerCube extends Entity
             posX += motionX * move;
             posY += motionY * move;
             posZ += motionZ * move;
-            if (distanceToNextSq < 0.001)
+            if (distanceToNextSq < 0.1)
             {
                 posX = list.get(index).getX() + 0.5;
                 posY = list.get(index).getY() + 0.5;
@@ -161,7 +168,7 @@ public class EntityPassengerCube extends Entity
         {
             origin = new BlockPos(posX, posY, posZ);
         }
-        else
+        else if (!list.isEmpty())
         {
             origin = list.get(index-1);
         }
