@@ -41,6 +41,9 @@ public class MNUBlocks
     public static final String REACTOR_CASING = "reactor_casing";
     public static Block reactorCasing;
 
+    public static final String PASSENGER_CUBE_SPAWNER = "passenger_cube_spawner";
+    public static Block passengerCubeSpawner;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -78,6 +81,10 @@ public class MNUBlocks
         reactorCasing = new BlockReactorCasing();
         registerBlockWithItemBlock(reactorCasing, REACTOR_CASING, new ItemBlockMulti(reactorCasing));
         registerTileEntity(reactorCasing, REACTOR_CASING, TileEntityReactorCasing.class);
+
+        passengerCubeSpawner = new BlockPassengerCubeSpawner();
+        registerBlock(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER);
+        registerTileEntity(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER, TileEntityPassengerCubeSpawner.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -113,6 +120,7 @@ public class MNUBlocks
         registerModel(solarFusionCasing, SOLAR_FUSION_CASING);
         registerModel(reactorController, REACTOR_CONTROLLER);
         registerMultipleModels(reactorCasing, REACTOR_CASING, 2);
+        registerModel(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER);
     }
 
     private static void registerModel(Block block, String name)
