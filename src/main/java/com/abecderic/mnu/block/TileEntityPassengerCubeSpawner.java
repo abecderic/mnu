@@ -17,6 +17,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TileEntityPassengerCubeSpawner extends TileEntity implements ITickable
@@ -119,6 +120,13 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
             EntityPassengerCube cube = new EntityPassengerCube(world, pos);
             cube.setPosition(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
             cube.setVelocity(0, 0, 0);
+            List<BlockPos> list = new ArrayList<>();
+            list.add(new BlockPos(370, 56, -186));
+            list.add(new BlockPos(370, 79, -186));
+            list.add(new BlockPos(374, 70, -194));
+            list.add(new BlockPos(358, 66, -180));
+            list.add(new BlockPos(388, 59, -186));
+            cube.setList(list);
             world.spawnEntity(cube);
         }
     }
