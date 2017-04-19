@@ -230,7 +230,7 @@ public class EntityCube extends EntityThrowable
     {
         super.motionX = x;
         super.motionY = y;
-        super.motionZ = x;
+        super.motionZ = z;
     }
 
     public int getEnergy()
