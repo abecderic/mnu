@@ -7,6 +7,8 @@ import com.abecderic.mnu.gui.GuiHandler;
 import com.abecderic.mnu.item.MNUItems;
 import com.abecderic.mnu.network.MNUNetwork;
 import com.abecderic.mnu.proxy.CommonProxy;
+import com.abecderic.mnu.util.DataSerializerFluid;
+import com.abecderic.mnu.util.DataSerializerList;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -41,6 +43,8 @@ public class MNU
     static
     {
         FluidRegistry.enableUniversalBucket();
+        DataSerializerFluid.init();
+        DataSerializerList.init();
     }
 
     @Mod.EventHandler

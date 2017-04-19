@@ -37,7 +37,7 @@ public class DataSerializerFluid
         }
     };
 
-    static
+    public static void init()
     {
         DataSerializers.registerSerializer(OPTIONAL_FLUID_STACK);
     }

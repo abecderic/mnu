@@ -93,7 +93,7 @@ public class DataSerializerList
         }
     };
 
-    static
+    public static void init()
     {
         DataSerializers.registerSerializer(POS_LIST);
         DataSerializers.registerSerializer(BYTE_LIST);
