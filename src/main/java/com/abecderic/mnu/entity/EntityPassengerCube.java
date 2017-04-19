@@ -11,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
@@ -131,8 +132,16 @@ public class EntityPassengerCube extends Entity
         if (hand == EnumHand.MAIN_HAND)
         {
             list = getList();
-            if (list.isEmpty()) return true;
             hasRider = true;
+            if (list.isEmpty())
+            {
+                if (!world.isRemote)
+                {
+                    player.sendMessage(new TextComponentTranslation("msg.passenger_cube.notconfigured"));
+                }
+                this.setDead();
+                return true;
+            }
             origin = new BlockPos(posX, posY, posZ);
             Vec3d vec = new Vec3d(list.get(0).getX() + 0.5 - posX, list.get(0).getY() + 0.5 - posY, list.get(0).getZ() + 0.5 - posZ);
             vec = vec.normalize();

@@ -73,6 +73,14 @@ public class ItemWrench extends Item
                 {
                     ((BlockNotifySlave) worldIn.getBlockState(pos).getBlock()).tryLink(worldIn, pos, master, player);
                 }
+                else
+                {
+                    TileEntity te = worldIn.getTileEntity(master);
+                    if (te != null && te instanceof INotifyMaster)
+                    {
+                        ((INotifyMaster) te).addBlock(pos);
+                    }
+                }
                 return EnumActionResult.SUCCESS;
             }
         }

@@ -20,13 +20,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityPassengerCubeSpawner extends TileEntity implements ITickable
+public class TileEntityPassengerCubeSpawner extends TileEntity implements ITickable, INotifyMaster
 {
     private static final int STORAGE = 81920;
     private static final int MAX_IN = 512;
     private static final int ENERGY_USAGE = 10240;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0);
     private int tickPart;
+    private List<BlockPos> list = new ArrayList<>();
 
     public TileEntityPassengerCubeSpawner()
     {
@@ -120,14 +121,26 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
             EntityPassengerCube cube = new EntityPassengerCube(world, pos);
             cube.setPosition(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
             cube.setVelocity(0, 0, 0);
-            List<BlockPos> list = new ArrayList<>();
-            list.add(new BlockPos(370, 56, -186));
-            list.add(new BlockPos(370, 79, -186));
-            list.add(new BlockPos(374, 70, -194));
-            list.add(new BlockPos(358, 66, -180));
-            list.add(new BlockPos(388, 59, -186));
             cube.setList(list);
             world.spawnEntity(cube);
         }
+    }
+
+    public void reset()
+    {
+        list.clear();
+    }
+
+    @Override
+    public void addBlock(BlockPos pos)
+    {
+        list.add(pos);
+        System.out.println("add " + pos);
+    }
+
+    @Override
+    public void removeBlock(BlockPos pos)
+    {
+        /* NO-OP */
     }
 }
