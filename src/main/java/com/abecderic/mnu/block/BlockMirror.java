@@ -114,7 +114,7 @@ public class BlockMirror extends BlockNotifySlave
             if (mirrorTE != null && mirrorTE instanceof TileEntityNotifySlave)
             {
                 ((TileEntityNotifySlave) mirrorTE).setMaster(master);
-                controller.addBlock(pos);
+                controller.addBlock(pos, player);
                 player.sendMessage(new TextComponentTranslation("msg.mirror.success"));
                 world.setBlockState(pos, world.getBlockState(pos).withProperty(LINKED, true));
             }

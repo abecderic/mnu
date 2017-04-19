@@ -3,6 +3,7 @@ package com.abecderic.mnu.block;
 import com.abecderic.mnu.entity.EntityCube;
 import com.abecderic.mnu.fluid.MNUFluids;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -155,13 +156,13 @@ public class TileEntityReactorController extends TileEntity implements ITickable
     }
 
     @Override
-    public void addBlock(BlockPos pos)
+    public void addBlock(BlockPos pos, EntityPlayer player)
     {
         /* NO-OP */
     }
 
     @Override
-    public void removeBlock(BlockPos pos)
+    public void removeBlock(BlockPos pos, EntityPlayer player)
     {
         setComplete(false);
     }

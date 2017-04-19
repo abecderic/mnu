@@ -5,6 +5,7 @@ import com.abecderic.mnu.util.EnergyStorageInternal;
 import com.abecderic.mnu.util.MicrobucketsFluidTank;
 import com.abecderic.mnu.util.TwoMicrobucketsFluidTanksHandler;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -216,9 +217,8 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     }
 
     @Override
-    public void addBlock(BlockPos pos)
+    public void addBlock(BlockPos pos, EntityPlayer player)
     {
-        System.out.println("add block " + pos);
         if (mirrorsY < 0 || pos.getY() == mirrorsY)
         {
             mirrors.add(pos);
@@ -230,9 +230,8 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     }
 
     @Override
-    public void removeBlock(BlockPos pos)
+    public void removeBlock(BlockPos pos, EntityPlayer player)
     {
-        System.out.println("remove block " + pos);
         if (pos.getY() > this.pos.getY())
         {
             setComplete(false);

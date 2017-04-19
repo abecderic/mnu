@@ -3,6 +3,7 @@ package com.abecderic.mnu.block;
 import com.abecderic.mnu.entity.EntityPassengerCube;
 import com.abecderic.mnu.util.EnergyStorageInternal;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -132,14 +133,14 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
     }
 
     @Override
-    public void addBlock(BlockPos pos)
+    public void addBlock(BlockPos pos, EntityPlayer player)
     {
         list.add(pos);
-        System.out.println("add " + pos);
+        player.sendMessage(new TextComponentTranslation("msg.passenger_cube.add"));
     }
 
     @Override
-    public void removeBlock(BlockPos pos)
+    public void removeBlock(BlockPos pos, EntityPlayer player)
     {
         /* NO-OP */
     }

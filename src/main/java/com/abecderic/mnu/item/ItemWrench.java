@@ -78,7 +78,7 @@ public class ItemWrench extends Item
                     TileEntity te = worldIn.getTileEntity(master);
                     if (te != null && te instanceof INotifyMaster)
                     {
-                        ((INotifyMaster) te).addBlock(pos);
+                        ((INotifyMaster) te).addBlock(pos, player);
                     }
                 }
                 return EnumActionResult.SUCCESS;

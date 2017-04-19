@@ -55,7 +55,7 @@ public abstract class BlockNotifySlave extends BlockContainer
                 TileEntity teMaster = world.getTileEntity(master);
                 if (teMaster != null && teMaster instanceof INotifyMaster)
                 {
-                    ((INotifyMaster) teMaster).removeBlock(pos);
+                    ((INotifyMaster) teMaster).removeBlock(pos, null);
                 }
             }
         }
