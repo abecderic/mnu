@@ -71,6 +71,7 @@ msg.mirror.seesky=§cThis block must be able to see the sky.
 msg.mirror.success=Link successful
 msg.mirror.toofar=§cThis mirror is too far from the controller.
 msg.passenger_cube.add=Added point to path.
+msg.passenger_cube.energy=Energy: %s / %s
 msg.passenger_cube.notconfigured=This cube is not configured yet.
 msg.passenger_cube.reset=Reset path for this cube spawner.
 msg.solar_fusion.energy=Energy: %s / %s
