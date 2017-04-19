@@ -1,7 +1,5 @@
 package com.abecderic.mnu.util;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import java.text.DecimalFormat;
 
 public class DarkMatterDeposits
@@ -32,22 +30,22 @@ public class DarkMatterDeposits
         switch (getAmountCategory(volume))
         {
             case 1:
-                text = ChatFormatting.DARK_RED + text;
+                text = "\u00A74" + text;
                 break;
             case 2:
-                text = ChatFormatting.RED + text;
+                text = "\u00A7c" + text;
                 break;
             case 3:
-                text = ChatFormatting.GOLD + text;
+                text = "\u00A76" + text;
                 break;
             case 4:
-                text = ChatFormatting.YELLOW + text;
+                text = "\u00A7e" + text;
                 break;
             case 5:
-                text = ChatFormatting.GREEN + text;
+                text = "\u00A7a" + text;
                 break;
             case 6:
-                text = ChatFormatting.DARK_GREEN + text;
+                text = "\u00A72" + text;
                 break;
         }
         return text;
