@@ -226,6 +226,13 @@ public class EntityCube extends EntityThrowable
         return compound;
     }
 
+    public void setMotion(double x, double y, double z)
+    {
+        super.motionX = x;
+        super.motionY = y;
+        super.motionZ = x;
+    }
+
     public int getEnergy()
     {
         return getDataManager().get(ENERGY);

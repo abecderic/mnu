@@ -174,6 +174,13 @@ public class EntityPassengerCube extends Entity
         compound.setInteger("index", index);
     }
 
+    public void setMotion(double x, double y, double z)
+    {
+        super.motionX = x;
+        super.motionY = y;
+        super.motionZ = z;
+    }
+
     @Override
     public double getMountedYOffset()
     {

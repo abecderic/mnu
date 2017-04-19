@@ -283,7 +283,7 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
         /* fill the cube */
         EntityCube cube = new EntityCube(world, getPos());
         cube.setPosition(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-        cube.setVelocity(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
+        cube.setMotion(facing.getDirectionVec().getX(), facing.getDirectionVec().getY(), facing.getDirectionVec().getZ());
         if (!fake)
         {
             energyStorage.removeEnergy(energyNeeded);

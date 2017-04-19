@@ -53,12 +53,12 @@ public class TileEntityReactorController extends TileEntity implements ITickable
                     EntityCube cube = new EntityCube(world, null);
                     BlockPos spawn = center.offset(EnumFacing.UP, 12);
                     cube.setPosition(spawn.getX() + 0.5, spawn.getY() + 0.5, spawn.getZ() + 0.5);
-                    cube.setVelocity(0, -1, 0);
+                    cube.setMotion(0, -1, 0);
                     world.spawnEntity(cube);
                     cube = new EntityCube(world, null);
                     spawn = center.offset(EnumFacing.DOWN, 12);
                     cube.setPosition(spawn.getX() + 0.5, spawn.getY() + 0.5, spawn.getZ() + 0.5);
-                    cube.setVelocity(0, 1, 0);
+                    cube.setMotion(0, 1, 0);
                     world.spawnEntity(cube);
                 }
             }

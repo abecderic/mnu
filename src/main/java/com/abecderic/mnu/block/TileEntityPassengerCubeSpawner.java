@@ -136,7 +136,7 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
             energyStorage.removeEnergy(ENERGY_USAGE);
             EntityPassengerCube cube = new EntityPassengerCube(world, pos);
             cube.setPosition(pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5);
-            cube.setVelocity(0, 0, 0);
+            cube.setMotion(0, 0, 0);
             cube.setList(list);
             world.spawnEntity(cube);
         }
