@@ -59,5 +59,6 @@ public class MNU
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         MNUNetwork.init();
         proxy.registerModels();
+        proxy.registerRecipes();
     }
 }

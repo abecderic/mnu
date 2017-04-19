@@ -3,14 +3,19 @@ package com.abecderic.mnu.block;
 import com.abecderic.mnu.MNU;
 import com.abecderic.mnu.item.ItemBlockMulti;
 import com.abecderic.mnu.item.ItemBlockTooltip;
+import com.abecderic.mnu.item.MNUItems;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class MNUBlocks
 {
@@ -141,5 +146,19 @@ public class MNUBlocks
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), i,
                     new ModelResourceLocation(MNU.MODID + ":" + name + "_" + i, "inventory"));
         }
+    }
+
+    public static void registerRecipes()
+    {
+        GameRegistry.addShapedRecipe(new ItemStack(feGen), "l", "f", 'l', MNUItems.logicModule, 'f', Blocks.FURNACE);
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dmPump), "sbs", "lpl", "sis", 's', "stone", 'b', Items.BUCKET, 'l', MNUItems.logicModule, 'p', Blocks.PISTON, 'i', Blocks.IRON_BARS));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(cubeSender), "sbs", "lrl", "sis", 's', "stone", 'b', Blocks.IRON_BARS, 'l', MNUItems.logicModule, 'i', "blockIron", 'r', "blockRedstone"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(mirror, 2), "ggg", "sps", 's', "stone", 'g', "blockGlass", 'p', Blocks.PISTON));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(solarFusionController), "ibi", "prp", "idi", 'b', Blocks.IRON_BARS, 'i', "ingotIron", 'p', Blocks.PISTON, 'r', "blockRedstone", 'd', "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(solarFusionCasing, 2), "igi", "glg", "igi", 'i', "ingotIron", 'g', "blockGlass", 'l', MNUItems.logicModule));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(reactorController), "iii", "lrl", "idi", 'i', "ingotIron", 'l', MNUItems.logicModule, 'r', "blockRedstone", 'd', "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(reactorCasing, 2, 0), "iii", "ili", "iii", 'i', "ingotIron", 'l', MNUItems.logicModule));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(reactorCasing, 2, 1), "ggg", "ili", "ggg", 'i', "ingotIron", 'g', "blockGlass", 'l', MNUItems.logicModule));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(passengerCubeSpawner), "ppp", "ili", 'i', "ingotIron", 'p', Blocks.PISTON, 'l', MNUItems.logicModule));
     }
 }

@@ -3,10 +3,14 @@ package com.abecderic.mnu.item;
 import com.abecderic.mnu.MNU;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class MNUItems
 {
@@ -28,6 +32,9 @@ public class MNUItems
     public static final String UPGRADE_SPEED = "upgrade_speed";
     public static Item upgradeSpeed;
 
+    public static final String LOGIC_MODULE = "logic_module";
+    public static Item logicModule;
+
     public static void registerItems()
     {
         dmScanner = new ItemDMScanner();
@@ -48,6 +55,9 @@ public class MNUItems
 
         upgradeSpeed = new ItemUpgradeSpeed();
         registerItem(upgradeSpeed, UPGRADE_SPEED);
+
+        logicModule = new ItemLogicModule();
+        registerItem(logicModule, LOGIC_MODULE);
     }
 
     private static void registerItem(Item item, String name)
@@ -64,6 +74,7 @@ public class MNUItems
         registerModelWithSameMeta(upgradeFluidsTransfer, UPGRADE_FLUIDS_TRANSFER, 16);
         registerModel(upgradeEnergy, UPGRADE_ENERGY);
         registerModel(upgradeSpeed, UPGRADE_SPEED);
+        registerModel(logicModule, LOGIC_MODULE);
     }
 
     private static void registerModel(Item item, String name)
@@ -99,5 +110,16 @@ public class MNUItems
             ModelLoader.setCustomModelResourceLocation(item, i,
                     new ModelResourceLocation(MNU.MODID + ":" + name + "_" + i, "inventory"));
         }
+    }
+
+    public static void registerRecipes()
+    {
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(dmScanner), " d ", "igi", "r r", 'd', "dustGlowstone", 'i', "ingotIron", 'g', "nuggetGold", 'r', "dustRedstone"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(wrench), "i i", " iy", " iy", 'i', "ingotIron", 'y', "dyeYellow"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(upgradeItemsTransfer), "rrr", "rpr", "sds", 'r', "dustRedstone", 'p', Blocks.PISTON, 's', "stone", 'd', "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(upgradeFluidsTransfer), "b", "u", 'u', upgradeItemsTransfer, 'b', Items.BUCKET));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(upgradeEnergy), "rrr", "rbr", "sds", 'r', "dustRedstone", 'b', "blockRedstone", 's', "stone", 'd', "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(upgradeSpeed), "uuu", "ubu", "sds", 'u', Items.SUGAR, 'b', "blockLapis", 's', "stone", 'd', "gemDiamond"));
+        GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(logicModule), " l ", "gig", "r r", 'l', "dyeBlue", 'g', "nuggetGold", 'i', "ingotIron", 'r', "dustRedstone"));
     }
 }

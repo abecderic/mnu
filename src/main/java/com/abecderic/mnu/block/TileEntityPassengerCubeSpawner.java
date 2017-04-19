@@ -126,7 +126,7 @@ public class TileEntityPassengerCubeSpawner extends TileEntity implements ITicka
 
     public ITextComponent getEnergyString()
     {
-        return new TextComponentTranslation("msg.passenger_cube_spawner.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
+        return new TextComponentTranslation("msg.passenger_cube.energy", energyStorage.getEnergyStoredText(), energyStorage.getMaxEnergyStoredText());
     }
 
     public void spawnPassengerCube()
