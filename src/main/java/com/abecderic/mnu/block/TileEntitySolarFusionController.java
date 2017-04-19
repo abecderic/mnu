@@ -30,7 +30,8 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
     private static final int MAX_IN = 512;
     private static final int TANK_STORAGE = 64000000;
     private static final int ENERGY_USAGE = 4;
-    private static final int DM_USAGE = 8;
+    private static final int DM_USAGE = 512;
+    private static final int MNU_GAIN = 3;
     private EnergyStorageInternal energyStorage = new EnergyStorageInternal(STORAGE, MAX_IN, 0);
     private MicrobucketsFluidTank tankIn = new MicrobucketsFluidTank(TANK_STORAGE);
     private MicrobucketsFluidTank tankOut = new MicrobucketsFluidTank(TANK_STORAGE);
@@ -61,7 +62,7 @@ public class TileEntitySolarFusionController extends TileEntity implements ITick
                     {
                         energyStorage.removeEnergy(ENERGY_USAGE * mirrors.size());
                         tankIn.drainMicrobuckets(MNUFluids.fluidDarkMatter, DM_USAGE * mirrors.size());
-                        tankOut.fillMicrobuckets(MNUFluids.fluidMNU, mirrors.size());
+                        tankOut.fillMicrobuckets(MNUFluids.fluidMNU, mirrors.size() * MNU_GAIN);
                     }
                 }
             }
