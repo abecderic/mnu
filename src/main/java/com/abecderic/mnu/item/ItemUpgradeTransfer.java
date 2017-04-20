@@ -4,6 +4,7 @@ import com.abecderic.mnu.MNU;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -64,14 +65,20 @@ public class ItemUpgradeTransfer extends Item
             {
                 return EnumActionResult.PASS;
             }
+            NBTTagCompound compound = stack.getTagCompound();
+            if (compound == null)
+            {
+                compound = new NBTTagCompound();
+            }
             if (player.isSneaking())
             {
-                player.getHeldItem(hand).setItemDamage((stack.getMetadata() & 0x07) + (isExtracting(stack) ? 0 : 8));
+                compound.setBoolean("extracting", !isExtracting(stack));
             }
             else
             {
-                player.getHeldItem(hand).setItemDamage((stack.getMetadata() & 0x08) + facing.getIndex());
+                compound.setByte("facing", (byte) facing.getIndex());
             }
+            player.getHeldItem(hand).setTagCompound(compound);
             return EnumActionResult.SUCCESS;
         }
         return EnumActionResult.PASS;
@@ -79,12 +86,22 @@ public class ItemUpgradeTransfer extends Item
 
     public EnumFacing getDirection(ItemStack stack)
     {
-        return EnumFacing.getFront(stack.getMetadata() & 0x07);
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null)
+        {
+            return EnumFacing.getFront(compound.getByte("facing"));
+        }
+        return EnumFacing.DOWN;
     }
 
     public boolean isExtracting(ItemStack stack)
     {
-        return (stack.getMetadata() & 0x08) != 0;
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null)
+        {
+            return compound.getBoolean("extracting");
+        }
+        return false;
     }
 
     public enum Type
