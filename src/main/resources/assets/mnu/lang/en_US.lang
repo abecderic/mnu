@@ -91,6 +91,7 @@ tile.mnu:cube_sender.name=Cube Sender
 tile.mnu:dm_pump.name=Dark Matter Pump
 tile.mnu:fe_creative.name=Creative Generator
 tile.mnu:fe_generator.name=Coal Burning Generator
+tile.mnu:fluid_creative.name=Creative Fluid Tank
 tile.mnu:fluid_darkmatter.name=Liquid Dark Matter
 tile.mnu:fluid_mnu.name=Liquid MNU
 tile.mnu:mirror.name=Mirror

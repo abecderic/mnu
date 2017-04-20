@@ -49,6 +49,9 @@ public class MNUBlocks
     public static final String PASSENGER_CUBE_SPAWNER = "passenger_cube_spawner";
     public static Block passengerCubeSpawner;
 
+    public static final String FLUID_CREATIVE = "fluid_creative";
+    public static Block fluidCreative;
+
     public static void registerBlocks()
     {
         feGen = new BlockFEGenerator();
@@ -90,6 +93,10 @@ public class MNUBlocks
         passengerCubeSpawner = new BlockPassengerCubeSpawner();
         registerBlock(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER);
         registerTileEntity(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER, TileEntityPassengerCubeSpawner.class);
+
+        fluidCreative = new BlockFluidCreative();
+        registerBlock(fluidCreative, FLUID_CREATIVE);
+        registerTileEntity(fluidCreative, FLUID_CREATIVE, TileEntityFluidCreative.class);
     }
 
     private static void registerBlock(Block block, String name)
@@ -126,6 +133,7 @@ public class MNUBlocks
         registerModel(reactorController, REACTOR_CONTROLLER);
         registerMultipleModels(reactorCasing, REACTOR_CASING, 2);
         registerModel(passengerCubeSpawner, PASSENGER_CUBE_SPAWNER);
+        registerModel(fluidCreative, FLUID_CREATIVE);
     }
 
     private static void registerModel(Block block, String name)
