@@ -33,6 +33,10 @@ public abstract class TileEntityNotifySlave extends TileEntity
 
     public void setMaster(BlockPos pos)
     {
+        if (world.getBlockState(getPos()).getBlock() instanceof BlockNotifySlave)
+        {
+            ((BlockNotifySlave) world.getBlockState(getPos()).getBlock()).notifyBlockRemoved(world, getPos());
+        }
         this.pos = pos;
         markDirty();
     }
