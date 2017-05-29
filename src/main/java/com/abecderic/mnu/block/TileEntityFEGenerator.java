@@ -15,6 +15,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
@@ -43,6 +44,23 @@ public class TileEntityFEGenerator extends TileEntity implements ITickable
             {
                 ItemStack fuel = itemStack.getStackInSlot(0).splitStack(1);
                 tickPart += TileEntityFurnace.getItemBurnTime(fuel) / 4;
+            }
+        }
+        for (EnumFacing facing : EnumFacing.VALUES)
+        {
+            BlockPos pos = getPos().offset(facing);
+            TileEntity te = world.getTileEntity(pos);
+            if (te != null)
+            {
+                IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
+                if (energy != null && energy.getEnergyStored() < energy.getMaxEnergyStored())
+                {
+                    int extracted = energyStorage.extractEnergy(Math.min(energy.getMaxEnergyStored() - energy.getEnergyStored(), MAX_OUT), false);
+                    if (extracted > 0)
+                    {
+                        energy.receiveEnergy(extracted, false);
+                    }
+                }
             }
         }
     }

@@ -125,7 +125,14 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
                     }
                 }
             }
-            /* get energy */
+            /* send cube */
+            if (receiver != null)
+            {
+                if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
+                {
+                    sendCube(false, isUpgraded);
+                }
+            }
             for (EnumFacing facing : EnumFacing.VALUES)
             {
                 BlockPos pos = getPos().offset(facing);
@@ -135,20 +142,13 @@ public class TileEntityCubeSender extends TileEntity implements ITickable, IInve
                     IEnergyStorage energy = te.getCapability(CapabilityEnergy.ENERGY, facing.getOpposite());
                     if (energy != null && energy.getEnergyStored() < energy.getMaxEnergyStored())
                     {
-                        int extracted = energy.extractEnergy(Math.min(MAX_TRANSFER * 20, energyStorage.getMaxEnergyStored() - energyStorage.getEnergyStored()), false);
+                        int amount = Math.min(energy.getMaxEnergyStored() - energy.getEnergyStored(), isUpgraded ? UPGRADED_MAX_TRANSFER : MAX_TRANSFER);
+                        int extracted = energyStorage.extractEnergy(amount, false);
                         if (extracted > 0)
                         {
-                            energyStorage.addEnergy(extracted);
+                            energy.receiveEnergy(extracted, false);
                         }
                     }
-                }
-            }
-            /* send cube */
-            if (receiver != null)
-            {
-                if (redstoneMode == 0 || (redstoneMode == 1 && !world.isBlockPowered(pos)) || (redstoneMode == 2 && world.isBlockPowered(pos)))
-                {
-                    sendCube(false, isUpgraded);
                 }
             }
             markDirty();
